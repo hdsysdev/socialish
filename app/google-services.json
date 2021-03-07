@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "831026728924",
+    "project_id": "socialish-16167",
+    "storage_bucket": "socialish-16167.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831026728924:android:03031fac72614a48fa0919",
+        "android_client_info": {
+          "package_name": "com.hdudowicz.socialish"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "831026728924-53mnpuhu9aek12ktaia4i05jlm66sni8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hdudowicz.socialish",
+            "certificate_hash": "7ebbb7ed4afb9050bc10fa523416c1bfe8e77254"
+          }
+        },
+        {
+          "client_id": "831026728924-6r6q26ro3bo8ckcsq3lll1joqoal77ij.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD58nVRPwEAG4jNUdEYv4Ha1hxhxcEXwos"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "831026728924-6r6q26ro3bo8ckcsq3lll1joqoal77ij.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

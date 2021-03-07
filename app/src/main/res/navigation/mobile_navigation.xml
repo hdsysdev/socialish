@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.hdudowicz.socialish.ui.home.HomeFragment"
+        android:name="com.hdudowicz.socialish.ui.profile.ProfileFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.hdudowicz.socialish.ui.dashboard.DashboardFragment"
+        android:name="com.hdudowicz.socialish.ui.feed.NewsFeedFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_news_feed" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.hdudowicz.socialish.ui.notifications.NotificationsFragment"
+        android:name="com.hdudowicz.socialish.ui.main.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
 </navigation>

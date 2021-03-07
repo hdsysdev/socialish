@@ -1,4 +1,4 @@
-package com.hdudowicz.socialish.ui.dashboard
+package com.hdudowicz.socialish.ui.feed
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,20 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.hdudowicz.socialish.R
 
-class DashboardFragment : Fragment() {
+class NewsFeedFragment : Fragment() {
 
-    private lateinit var dashboardViewModel: DashboardViewModel
+    private lateinit var newsFeedViewModel: NewsFeedViewModel
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        dashboardViewModel =
-                ViewModelProvider(this).get(DashboardViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
+        newsFeedViewModel =
+                ViewModelProvider(this).get(NewsFeedViewModel::class.java)
+        val root = inflater.inflate(R.layout.fragment_news_feed, container, false)
         val textView: TextView = root.findViewById(R.id.text_dashboard)
-        dashboardViewModel.text.observe(viewLifecycleOwner, Observer {
+        newsFeedViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
         return root
