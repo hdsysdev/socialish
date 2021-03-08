@@ -3,7 +3,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_login">Login</string>
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
@@ -17,4 +17,9 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lacus velit, molestie eu risus non, gravida placerat metus. Fusce gravida magna eu porta mollis. Sed mollis eget turpis tempus aliquet. Cras id justo at lorem venenatis efficitur. Suspendisse posuere purus sed justo pharetra, vel aliquam nisl porta. Praesent in sollicitudin nibh, id aliquam massa. In hac habitasse platea dictumst. Cras ultrices vel nisi non vestibulum. Donec eget est sed lorem luctus ornare. Nam nec velit est. Mauris id vulputate augue.</string>
+
+
+
 </resources>

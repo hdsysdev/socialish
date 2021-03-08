@@ -1,4 +1,4 @@
-package com.hdudowicz.socialish.ui.notifications
+package com.hdudowicz.socialish.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

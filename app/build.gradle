@@ -3,6 +3,7 @@ plugins {
     id 'com.google.gms.google-services'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -40,8 +41,6 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.wear:wear:1.1.0'
-    compileOnly 'com.google.android.wearable:wearable:2.8.1'
     def lifecycle_version = "2.3.0"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -63,12 +62,22 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
     // FIREBASE
+    // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation platform('com.google.firebase:firebase-bom:26.6.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
 
+    // ANALYTICS AND CRASH REPORTING
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
     // Prebuilt login screen
     implementation 'com.firebaseui:firebase-ui-auth:6.4.0'
+
+    // GLIDE - Image loading library
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    // SWIPE REFRESH LAYOUT
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     // COROUTINES
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1'
