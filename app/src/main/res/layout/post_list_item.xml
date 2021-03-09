@@ -58,7 +58,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="24dp"
                         android:layout_gravity="center_vertical"
-                        android:date="X days ago"
+                        app:date="@{post.datePosted}"
                         android:textSize="16sp" />
                 </LinearLayout>
 

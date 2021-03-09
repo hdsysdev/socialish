@@ -57,5 +57,9 @@ object LoginRepository {
         return firebaseAuth.createUserWithEmailAndPassword(email, pass)
     }
 
+    fun isUserLoggedIn(): Boolean{
+        return firebaseAuth.currentUser != null
+    }
+
 
 }

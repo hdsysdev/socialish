@@ -21,7 +21,7 @@ class LoginViewModel : ViewModel() {
     private val mUserLoginState = MutableLiveData<Resource<FirebaseUser>>()
     val userLoginState: LiveData<Resource<FirebaseUser>> get() = mUserLoginState
 
-
+    val isLoggedIn get() = LoginRepository.isUserLoggedIn()
 
     fun login() {
         // Using coroutines with IO dispatcher for network calls

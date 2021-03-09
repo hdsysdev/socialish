@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
@@ -15,28 +17,8 @@ import com.hdudowicz.socialish.utils.PostUtils.getContext
 import java.util.*
 import kotlin.collections.ArrayList
 
-class PostFeedAdapter: RecyclerView.Adapter<PostFeedAdapter.PostViewHolder>() {
-    private var mPostList: ArrayList<Post> = arrayListOf()
-
-    init {
-        val post = Post(
-            "",
-            "",
-            "",
-            "Test Post",
-            "Body",
-            true,
-            Date(Calendar.getInstance().timeInMillis - 86400000)
-        )
-        mPostList.add(post)
-        mPostList.add(post)
-        mPostList.add(post)
-    }
-
-    fun setPostList(list: ArrayList<Post>){
-        mPostList = list
-    }
-
+// Using list adapter instead of RecyclerView adapter because it automates change detection in data set using DiskUtil thus reducing boilerplate code.
+class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostItemDiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         // Create post view using post list item layout binding
@@ -47,40 +29,32 @@ class PostFeedAdapter: RecyclerView.Adapter<PostFeedAdapter.PostViewHolder>() {
 
     // Overriding onBindViewHolder to initialise Post object databinding
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        val post = getPost(position)
+        val post = getItem(position)
         holder.binding.post = post
+
+        holder.binding.postImage.visibility = View.VISIBLE
+
+        val progressDrawable = CircularProgressDrawable(holder.binding.getContext())
+        progressDrawable.strokeWidth = 4f
+        progressDrawable.centerRadius = 25f
+        progressDrawable.start()
+
+        Glide.with(holder.binding.getContext())
+            .load("https://static.wikia.nocookie.net/dogelore/images/8/87/411.png/revision/latest/top-crop/width/360/height/450?cb=20200330152532")
+            .centerCrop()
+            .placeholder(progressDrawable)
+            .into(holder.binding.postImage)
     }
 
-    override fun getItemCount(): Int {
-        return mPostList.size
-    }
 
-    fun getPost(pos: Int): Post {
-        return mPostList[pos]
-    }
-
+    // Using a ViewHolder allows views to be cached for fast access
     open class PostViewHolder(val binding: PostListItemBinding): RecyclerView.ViewHolder(binding.root) {
         init {
             // TODO: Multiple view types 
         }
     }
 
-    class ImagePostViewHolder(binding: PostListItemBinding): PostViewHolder(binding){
-        init {
-            binding.postImage.visibility = View.VISIBLE
 
-            val progressDrawable = CircularProgressDrawable(binding.getContext())
-            progressDrawable.strokeWidth = 4f
-            progressDrawable.centerRadius = 25f
-            progressDrawable.start()
-
-            Glide.with(binding.getContext())
-                .load("https://static.wikia.nocookie.net/dogelore/images/8/87/411.png/revision/latest/top-crop/width/360/height/450?cb=20200330152532")
-                .centerCrop()
-                .placeholder(progressDrawable)
-                .into(binding.postImage)
-        }
-    }
 
     object PostBindingAdapter {
         @BindingAdapter("date")
@@ -94,4 +68,16 @@ class PostFeedAdapter: RecyclerView.Adapter<PostFeedAdapter.PostViewHolder>() {
         }
 
     }
+}
+
+// Callback class for calculating differences between post objects
+class PostItemDiffCallback: DiffUtil.ItemCallback<Post>(){
+    override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
+        return oldItem.title == newItem.title && oldItem.body == newItem.body
+    }
+
+    override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
+        return newItem.postId == oldItem.postId
+    }
+
 }

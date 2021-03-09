@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
         viewModel.userLoginState.observe(this, { resource ->
             if (resource is Resource.Success) {
                 // Start main activity when user has logged in successfully
-                startActivity(Intent(this, MainActivity::class.java))
+                startMainActivity()
             } else if (resource is Resource.Error) {
                 // If exception is from invalid credentials, tell user to try again
                 if (resource.exception is FirebaseAuthInvalidCredentialsException){
@@ -48,7 +48,14 @@ class LoginActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         // Check if a user is signed in and open main activity if so
+        if(viewModel.isLoggedIn){
+            startMainActivity()
+        }
 
+    }
+
+    private fun startMainActivity(){
+        startActivity(Intent(this, MainActivity::class.java))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -58,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
                 val response = IdpResponse.fromResultIntent(data)
 
                 if (resultCode == Activity.RESULT_OK) {
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startMainActivity()
                 } else {
                     // Signin failed
                 }

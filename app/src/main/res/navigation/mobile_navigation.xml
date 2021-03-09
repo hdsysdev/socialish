@@ -3,23 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_feed">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.hdudowicz.socialish.ui.profile.ProfileFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_profile" />
-
-    <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.hdudowicz.socialish.ui.feed.NewsFeedFragment"
-        android:label="@string/title_dashboard"
+        android:id="@+id/navigation_feed"
+        android:name="com.hdudowicz.socialish.ui.feed.PostFeedFragment"
+        android:label="News Feed"
         tools:layout="@layout/fragment_news_feed" />
 
-<!--    <fragment-->
-<!--        android:id="@+id/navigation_notifications"-->
-<!--        android:name="com.hdudowicz.socialish.ui.main.notifications.NotificationsFragment"-->
-<!--        android:label="@string/title_notifications"-->
-<!--        tools:layout="@layout/fragment_notifications" />-->
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.hdudowicz.socialish.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+
+
 </navigation>
