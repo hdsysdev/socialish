@@ -61,35 +61,23 @@ class PostFeedFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-//        val mPostList: ArrayList<Post> = arrayListOf()
-//        val post = Post(
-//            "",
-//            "",
-//            "",
-//            "Test Post",
-//            "Body",
-//            true,
-//            Date(Calendar.getInstance().timeInMillis - 86400000)
-//        )
-//        mPostList.add(post)
-//        mPostList.add(post)
-//        mPostList.add(post)
-//        postFeedAdapter.submitList(mPostList)
+
         binding.swiperefresh.isRefreshing = true
         viewModel.loadNewPosts()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        return when(item.itemId){
             R.id.refresh -> {
                 binding.swiperefresh.isRefreshing = true
 
                 viewModel.loadNewPosts()
-            }
 
+                true
+            }
+            else -> false
         }
 
-        return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

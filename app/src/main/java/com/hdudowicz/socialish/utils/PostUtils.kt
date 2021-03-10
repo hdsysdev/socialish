@@ -23,6 +23,7 @@ object PostUtils {
         return postAdapter.fromJson(json)
     }
 
+
     // Extension function getting context from DataBinding classes
     fun ViewDataBinding.getContext(): Context{
         return root.context

@@ -79,6 +79,7 @@
                     android:contentDescription="Favorite button" />
 
                 <ImageButton
+                    android:id="@+id/share_post"
                     android:layout_width="48dp"
                     android:layout_height="match_parent"
                     android:background="@color/transparent"

@@ -1,10 +1,12 @@
 package com.hdudowicz.socialish.adapters
 
+import android.content.Intent
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -44,6 +46,20 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
             .centerCrop()
             .placeholder(progressDrawable)
             .into(holder.binding.postImage)
+
+        // Listener for share button using android Sharesheet to share post text to other apps
+        holder.binding.sharePost.setOnClickListener {
+            // Creating share text
+            val shareText = "Socialish Post - \nTitle: ${post.title} \nBody: ${post.body}"
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TITLE, post.title)
+                putExtra(Intent.EXTRA_TEXT, shareText)
+                type = "text/plain"
+            }
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            it.context.startActivity(shareIntent)
+        }
     }
 
 
