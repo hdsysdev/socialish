@@ -2,10 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/search"
-        android:icon="@drawable/ic_search_24dp"
-        android:title="Search"
-        android:contentDescription="Search Posts"
+        android:id="@+id/refresh"
+        android:icon="@drawable/ic_refresh_24dp"
+        android:title="Refresh"
+        android:contentDescription="Refresh Posts"
         app:showAsAction="always" />
 
 

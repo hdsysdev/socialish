@@ -1,12 +1,18 @@
-package com.hdudowicz.socialish
+package com.hdudowicz.socialish.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.hdudowicz.socialish.R
 import com.hdudowicz.socialish.databinding.ActivityMainBinding
+import com.hdudowicz.socialish.ui.createpost.CreatePostActivity
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -27,14 +33,13 @@ class MainActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.navigation_feed, R.id.navigation_profile))
+            R.id.navigation_feed, R.id.navigation_profile
+        ))
         setupActionBarWithNavController(navController, appBarConfiguration)
         // Setting up bottom navigation bar with navigation controller for the correct nav graph
         binding.navBar.setupWithNavController(navController)
 
 
-
     }
-
 
 }

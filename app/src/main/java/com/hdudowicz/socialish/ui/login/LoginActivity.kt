@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.IdpResponse
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.hdudowicz.socialish.MainActivity
+import com.hdudowicz.socialish.ui.MainActivity
 import com.hdudowicz.socialish.data.model.Resource
 import com.hdudowicz.socialish.databinding.ActivityLoginBinding
 import com.hdudowicz.socialish.viewmodels.LoginViewModel
