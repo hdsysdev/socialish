@@ -34,6 +34,7 @@ class PostFeedFragment : Fragment() {
                 ViewModelProvider(this).get(PostFeedViewModel::class.java)
         binding = FragmentNewsFeedBinding.inflate(layoutInflater, container, false)
         binding.handler = PostFeedClickHandler()
+        // Show options menu items
         setHasOptionsMenu(true)
         // Set adapter for populating the post feed recycler view
         postFeedAdapter = PostFeedAdapter()
@@ -44,7 +45,6 @@ class PostFeedFragment : Fragment() {
             postFeedAdapter.submitList(list)
             // Stop refresh animation
             binding.swiperefresh.isRefreshing = false
-
         })
 
         // Registering adapter data observer on post feed adapter to scroll to top post when new post is inserted
@@ -53,11 +53,6 @@ class PostFeedFragment : Fragment() {
                 (binding.postList.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(positionStart, 0)
             }
         })
-
-        binding.createPostButton.setOnClickListener {
-            startActivity(Intent(it.context, CreatePostActivity::class.java),)
-        }
-
 
         // Listener for swipe down to refresh gesture
         binding.swiperefresh.setOnRefreshListener {

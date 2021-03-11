@@ -13,11 +13,6 @@ import kotlinx.coroutines.launch
 class PostFeedViewModel : ViewModel() {
     private val postRepository = PostRepository()
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
-    }
-    val text: LiveData<String> = _text
-
     private val mPostFeedLiveData: MutableLiveData<ArrayList<Post>> = MutableLiveData()
     val postFeedLiveData: LiveData<ArrayList<Post>> = mPostFeedLiveData
 
@@ -33,18 +28,9 @@ class PostFeedViewModel : ViewModel() {
             } else {
                 loadSuccess.postValue(false)
             }
-
-
         }
         return loadSuccess
     }
 
-    fun refreshPosts(){
-
-    }
-
-    fun uploadImage(uri: Uri) {
-
-    }
 
 }

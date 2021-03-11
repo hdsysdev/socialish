@@ -48,7 +48,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/post_title"
+                        android:id="@+id/display_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -57,7 +57,7 @@
                         android:textSize="20sp" />
 
                     <TextView
-                        android:id="@+id/post_date"
+                        android:id="@+id/posted_date"
                         android:layout_width="wrap_content"
                         android:layout_height="24dp"
                         android:layout_gravity="center_vertical"
@@ -101,7 +101,9 @@
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:text="@{post.body}"
-                android:visibility="gone"
+                android:visibility="visible"
+                android:maxLines="1"
+                android:ellipsize="end"
                 app:layout_constraintVertical_bias="0"
                 app:layout_constraintTop_toBottomOf="@id/post_image"
                 app:layout_constraintStart_toStartOf="parent"

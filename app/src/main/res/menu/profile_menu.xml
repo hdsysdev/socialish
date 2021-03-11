@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/change_pic"
+        android:icon="@drawable/ic_add_24dp"
+        android:title="Change Profile Pic"
+        android:contentDescription="Change Profile Picture"
+        app:showAsAction="never" />
+
+
+
+</menu>

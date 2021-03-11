@@ -3,8 +3,8 @@ package com.hdudowicz.socialish.adapters
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.text.TextUtils
 import android.text.format.DateUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.hdudowicz.socialish.data.model.Post
 import com.hdudowicz.socialish.databinding.PostListItemBinding
-import com.hdudowicz.socialish.utils.PostUtils
-import com.hdudowicz.socialish.utils.PostUtils.getContext
 import com.perfomer.blitz.setTimeAgo
 import java.util.*
 
@@ -40,7 +36,8 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
         val post = getItem(position)
         holder.binding.post = post
 
-        holder.binding.postDate.setTimeAgo(post.datePosted, showSeconds = false, autoUpdate = true)
+        // Using library for auto updating time string since post created
+        holder.binding.postedDate.setTimeAgo(post.datePosted, showSeconds = false, autoUpdate = true)
 
         // Setting post image visibility to gone by default, visibility is changed for image posts later
         holder.binding.postImage.visibility = View.GONE
@@ -49,21 +46,30 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
             holder.binding.postImage.visibility = View.VISIBLE
 
             // Creating progress drawable to show when Glide is loading a post
-            val progressDrawable = CircularProgressDrawable(holder.binding.getContext()).apply {
+            val progressDrawable = CircularProgressDrawable(holder.binding.root.context).apply {
                 strokeWidth = 6f
                 centerRadius = 35f
             }
             progressDrawable.start()
 
-            Glide.with(holder.binding.getContext())
+            // Setting post image with glide
+            Glide.with(holder.binding.root.context)
                 .load(post.imageUri)
                 .fitCenter()
                 .error(ColorDrawable(Color.BLACK))
                 .placeholder(progressDrawable)
                 .into(holder.binding.postImage)
         } else {
-            // Clearing glide loads to prevent images being loaded in the wrong post due to recycling of views
-            Glide.with(holder.binding.getContext()).clear(holder.binding.postImage)
+            // Clearing glide load to prevent images being loaded in the wrong post due to recycling of views
+            Glide.with(holder.binding.root.context).clear(holder.binding.postImage)
+        }
+
+
+        // If post body is empty then hide it's body TextView
+        if (post.body.isBlank()){
+            holder.binding.postBody.visibility = View.GONE
+        } else {
+            holder.binding.postBody.visibility = View.VISIBLE
         }
 
         // Listener for share button using android Sharesheet to share post text to other apps
@@ -82,33 +88,22 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
     }
 
 
-    // Using a ViewHolder allows views to be cached for fast access
+    // Using a ViewHolder allows views to be cached instead of recreating them
     class PostViewHolder(val binding: PostListItemBinding): RecyclerView.ViewHolder(binding.root) {
-        var contentCollapsed: Boolean = true
+        var bodyCollapsed: Boolean = true
         init {
-            // TODO: Multiple view types
+            // Clicking the post card reveals the rest of the post body
             binding.cardView.setOnClickListener {
-                contentCollapsed = !contentCollapsed
+                bodyCollapsed = !bodyCollapsed
                 TransitionManager.beginDelayedTransition(binding.cardView)
-                binding.postBody.visibility = if(contentCollapsed) View.GONE else View.VISIBLE
-
+                // Change max lines showing depending on if body is collapsed
+                if (bodyCollapsed){
+                    binding.postBody.maxLines = 1
+                } else {
+                    binding.postBody.maxLines = 5
+                }
             }
         }
-    }
-
-
-
-    object PostBindingAdapter {
-        @BindingAdapter("date")
-        @JvmStatic
-        fun bindDate(textView: TextView, date: Date){
-            textView.text = DateUtils.getRelativeTimeSpanString(
-                date.time,
-                Calendar.getInstance().timeInMillis,
-                0
-            )
-        }
-
     }
 }
 
