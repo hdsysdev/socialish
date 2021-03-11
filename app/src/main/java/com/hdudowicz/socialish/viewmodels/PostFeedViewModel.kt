@@ -19,7 +19,8 @@ class PostFeedViewModel : ViewModel() {
     val postFeedLiveData: LiveData<ArrayList<Post>> = mPostFeedLiveData
 
 
-    fun loadNewPosts() {
+    fun loadNewPosts(): LiveData<Boolean> {
+        val loadSuccess = MutableLiveData<Boolean>()
         postRepository.getPosts()
             .addOnSuccessListener { query ->
                 val postList = arrayListOf<Post>()
@@ -37,7 +38,17 @@ class PostFeedViewModel : ViewModel() {
                     )
                 }
                 mPostFeedLiveData.postValue(postList)
+                // If posts loaded successfully then post
+                loadSuccess.postValue(true)
             }
+            .addOnFailureListener {
+                loadSuccess.postValue(false)
+            }
+        return loadSuccess
+    }
+
+    fun refreshPosts(){
+
     }
 
     fun uploadImage(uri: Uri) {

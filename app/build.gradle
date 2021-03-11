@@ -73,6 +73,9 @@ dependencies {
 
     implementation 'com.robertlevonyan.components:Picker:2.0.2'
 
+    // TOASTY - Coloured toasts
+    implementation 'com.github.GrenderG:Toasty:1.5.0'
+
     // ANALYTICS AND CRASH REPORTING
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'

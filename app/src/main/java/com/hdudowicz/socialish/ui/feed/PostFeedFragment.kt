@@ -1,5 +1,6 @@
 package com.hdudowicz.socialish.ui.feed
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.hdudowicz.socialish.R
 import com.hdudowicz.socialish.adapters.PostFeedAdapter
 import com.hdudowicz.socialish.data.model.Post
@@ -27,7 +29,7 @@ class PostFeedFragment : Fragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         viewModel =
                 ViewModelProvider(this).get(PostFeedViewModel::class.java)
         binding = FragmentNewsFeedBinding.inflate(layoutInflater, container, false)
@@ -42,13 +44,18 @@ class PostFeedFragment : Fragment() {
             postFeedAdapter.submitList(list)
             // Stop refresh animation
             binding.swiperefresh.isRefreshing = false
-            binding.postList.smoothScrollToPosition(0)
 
         })
 
+        // Registering adapter data observer on post feed adapter to scroll to top post when new post is inserted
+        postFeedAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                (binding.postList.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(positionStart, 0)
+            }
+        })
 
         binding.createPostButton.setOnClickListener {
-            startActivity(Intent(it.context, CreatePostActivity::class.java))
+            startActivity(Intent(it.context, CreatePostActivity::class.java),)
         }
 
 
@@ -60,19 +67,21 @@ class PostFeedFragment : Fragment() {
         return binding.root
     }
 
+    fun loadPosts(){
+        binding.swiperefresh.isRefreshing = true
+        viewModel.loadNewPosts()
+    }
+
     override fun onResume() {
         super.onResume()
 
-        binding.swiperefresh.isRefreshing = true
-        viewModel.loadNewPosts()
+        loadPosts()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.refresh -> {
-                binding.swiperefresh.isRefreshing = true
-
-                viewModel.loadNewPosts()
+                loadPosts()
 
                 true
             }
@@ -85,6 +94,8 @@ class PostFeedFragment : Fragment() {
         inflater.inflate(R.menu.toolbar_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
+
+
 }
 
 class PostFeedClickHandler{

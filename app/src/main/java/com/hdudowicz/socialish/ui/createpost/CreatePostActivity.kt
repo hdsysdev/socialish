@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.hdudowicz.socialish.data.model.Resource
 import com.hdudowicz.socialish.databinding.ActivityCreatePostBinding
 import com.hdudowicz.socialish.viewmodels.CreatePostViewModel
+import es.dmoral.toasty.Toasty
 
 
 class CreatePostActivity : AppCompatActivity() {
@@ -34,13 +35,13 @@ class CreatePostActivity : AppCompatActivity() {
         binding.createPostButton.setOnClickListener {
             viewModel.createPost().observe(this, {
                 if (it is Resource.Error) {
-                    Toast.makeText(
+                    Toasty.error(
                         this,
                         "Error creating post. Try again later.",
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    Toast.makeText(
+                    Toasty.success(
                         this,
                         "Post created",
                         Toast.LENGTH_SHORT
