@@ -1,6 +1,8 @@
 package com.hdudowicz.socialish.adapters
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,8 +20,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.hdudowicz.socialish.data.model.Post
 import com.hdudowicz.socialish.databinding.PostListItemBinding
+import com.hdudowicz.socialish.utils.PostUtils
 import com.hdudowicz.socialish.utils.PostUtils.getContext
-import com.hdudowicz.socialish.utils.PostUtils.imageUrlById
+import com.perfomer.blitz.setTimeAgo
 import java.util.*
 
 // Using list adapter instead of RecyclerView adapter because it automates change detection in data set using DiskUtil thus reducing boilerplate code.
@@ -37,31 +40,31 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
         val post = getItem(position)
         holder.binding.post = post
 
+        holder.binding.postDate.setTimeAgo(post.datePosted, showSeconds = false, autoUpdate = true)
+
+        // Setting post image visibility to gone by default, visibility is changed for image posts later
+        holder.binding.postImage.visibility = View.GONE
+
         if (post.isImagePost){
             holder.binding.postImage.visibility = View.VISIBLE
 
-            val progressDrawable = CircularProgressDrawable(holder.binding.getContext())
-            progressDrawable.strokeWidth = 4f
-            progressDrawable.centerRadius = 25f
+            // Creating progress drawable to show when Glide is loading a post
+            val progressDrawable = CircularProgressDrawable(holder.binding.getContext()).apply {
+                strokeWidth = 6f
+                centerRadius = 35f
+            }
             progressDrawable.start()
 
-            imageUrlById(post.postId)
-                .addOnSuccessListener {
-                    // Load image using link to firebase storage with postId
-                    Glide.with(holder.binding.getContext())
-                        .load(it)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        .fitCenter()
-                        .placeholder(progressDrawable)
-                        .into(holder.binding.postImage)
-
-                }
-                .addOnFailureListener {
-                    Log.e("POST", "Failed to load post ", it)
-                }
+            Glide.with(holder.binding.getContext())
+                .load(post.imageUri)
+                .fitCenter()
+                .error(ColorDrawable(Color.BLACK))
+                .placeholder(progressDrawable)
+                .into(holder.binding.postImage)
+        } else {
+            // Clearing glide loads to prevent images being loaded in the wrong post due to recycling of views
+            Glide.with(holder.binding.getContext()).clear(holder.binding.postImage)
         }
-
 
         // Listener for share button using android Sharesheet to share post text to other apps
         holder.binding.sharePost.setOnClickListener {
@@ -76,13 +79,11 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
             val shareIntent = Intent.createChooser(sendIntent, null)
             it.context.startActivity(shareIntent)
         }
-
-
     }
 
 
     // Using a ViewHolder allows views to be cached for fast access
-    open class PostViewHolder(val binding: PostListItemBinding): RecyclerView.ViewHolder(binding.root) {
+    class PostViewHolder(val binding: PostListItemBinding): RecyclerView.ViewHolder(binding.root) {
         var contentCollapsed: Boolean = true
         init {
             // TODO: Multiple view types
@@ -114,7 +115,7 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
 // Callback class for calculating differences between post objects
 class PostItemDiffCallback: DiffUtil.ItemCallback<Post>(){
     override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
-        return oldItem.title == newItem.title && oldItem.body == newItem.body
+        return oldItem.title == newItem.title && oldItem.body == newItem.body && oldItem.imageUri == newItem.imageUri
     }
 
     override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {

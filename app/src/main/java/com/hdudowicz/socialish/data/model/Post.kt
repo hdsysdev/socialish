@@ -1,6 +1,7 @@
 package com.hdudowicz.socialish.data.model
 
 import android.icu.text.RelativeDateTimeFormatter
+import android.net.Uri
 import android.text.format.DateFormat
 import android.text.format.DateUtils
 import android.widget.TextView
@@ -9,11 +10,11 @@ import androidx.databinding.BindingMethod
 import com.squareup.moshi.JsonClass
 import java.util.*
 
-@JsonClass(generateAdapter = true)
 data class Post(
     val postId: String,
     val userId: String,
     val isImagePost: Boolean = false,
+    val imageUri: Uri?,
     val title: String,
     val body: String,
     @field:JvmField

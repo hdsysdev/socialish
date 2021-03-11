@@ -33,17 +33,17 @@ class CreatePostActivity : AppCompatActivity() {
         })
 
         binding.createPostButton.setOnClickListener {
-            viewModel.createPost().observe(this, {
-                if (it is Resource.Error) {
-                    Toasty.error(
-                        this,
-                        "Error creating post. Try again later.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
+            viewModel.createPost().observe(this, { success ->
+                if (success) {
                     Toasty.success(
                         this,
                         "Post created",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Toasty.error(
+                        this,
+                        "Error creating post. Try again later.",
                         Toast.LENGTH_SHORT
                     ).show()
                 }

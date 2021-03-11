@@ -4,8 +4,11 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.hdudowicz.socialish.data.model.Post
 import com.hdudowicz.socialish.data.source.PostRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class PostFeedViewModel : ViewModel() {
     private val postRepository = PostRepository()
@@ -21,29 +24,18 @@ class PostFeedViewModel : ViewModel() {
 
     fun loadNewPosts(): LiveData<Boolean> {
         val loadSuccess = MutableLiveData<Boolean>()
-        postRepository.getPosts()
-            .addOnSuccessListener { query ->
-                val postList = arrayListOf<Post>()
-                query.documents.forEach { doc ->
-                    postList.add(
-                        Post(
-                            postId = doc.id,
-                            userId = doc.getString("userId")!!,
-                            isImagePost = doc.getBoolean("isImagePost")!!,
-                            title = doc.getString("title")!!,
-                            body = doc.getString("body")!!,
-                            isAnonymous = doc.getBoolean("isAnonymous")!!,
-                            datePosted = doc.getDate("datePosted")!!
-                        )
-                    )
-                }
-                mPostFeedLiveData.postValue(postList)
-                // If posts loaded successfully then post
+        viewModelScope.launch(Dispatchers.IO){
+            val posts = postRepository.getPosts()
+
+            if (posts != null){
+                mPostFeedLiveData.postValue(posts)
                 loadSuccess.postValue(true)
-            }
-            .addOnFailureListener {
+            } else {
                 loadSuccess.postValue(false)
             }
+
+
+        }
         return loadSuccess
     }
 

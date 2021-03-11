@@ -76,6 +76,9 @@ dependencies {
     // TOASTY - Coloured toasts
     implementation 'com.github.GrenderG:Toasty:1.5.0'
 
+    // Self updating text view time
+    implementation 'com.github.perfomer:blitz:1.0.9'
+
     // ANALYTICS AND CRASH REPORTING
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'

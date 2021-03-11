@@ -81,6 +81,7 @@ class PostFeedFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.refresh -> {
+                postFeedAdapter.submitList(listOf())
                 loadPosts()
 
                 true
