@@ -11,17 +11,19 @@ import java.util.*
 
 @JsonClass(generateAdapter = true)
 data class Post(
-    val userId: String? = null,
-    val imageId: String? = null,
-    val title: String? = null,
-    val body: String? = null,
+    val postId: String,
+    val userId: String,
+    val isImagePost: Boolean = false,
+    val title: String,
+    val body: String,
     @field:JvmField
-    val isAnonymous: Boolean? = true,
-    val datePosted: Date? = null
+    val isAnonymous: Boolean = true,
+    val datePosted: Date
 )
 data class CreatedPost(
     val userId: String?,
-    val imageId: String?,
+    @field:JvmField
+    val isImagePost: Boolean? = false,
     val title: String?,
     val body: String?,
     @field:JvmField

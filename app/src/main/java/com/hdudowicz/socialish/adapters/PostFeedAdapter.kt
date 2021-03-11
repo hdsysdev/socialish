@@ -2,22 +2,25 @@ package com.hdudowicz.socialish.adapters
 
 import android.content.Intent
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.hdudowicz.socialish.data.model.Post
 import com.hdudowicz.socialish.databinding.PostListItemBinding
 import com.hdudowicz.socialish.utils.PostUtils.getContext
+import com.hdudowicz.socialish.utils.PostUtils.imageUrlById
 import java.util.*
-import kotlin.collections.ArrayList
 
 // Using list adapter instead of RecyclerView adapter because it automates change detection in data set using DiskUtil thus reducing boilerplate code.
 class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostItemDiffCallback()) {
@@ -34,18 +37,31 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
         val post = getItem(position)
         holder.binding.post = post
 
-        holder.binding.postImage.visibility = View.VISIBLE
+        if (post.isImagePost){
+            holder.binding.postImage.visibility = View.VISIBLE
 
-        val progressDrawable = CircularProgressDrawable(holder.binding.getContext())
-        progressDrawable.strokeWidth = 4f
-        progressDrawable.centerRadius = 25f
-        progressDrawable.start()
+            val progressDrawable = CircularProgressDrawable(holder.binding.getContext())
+            progressDrawable.strokeWidth = 4f
+            progressDrawable.centerRadius = 25f
+            progressDrawable.start()
 
-        Glide.with(holder.binding.getContext())
-            .load("https://static.wikia.nocookie.net/dogelore/images/8/87/411.png/revision/latest/top-crop/width/360/height/450?cb=20200330152532")
-            .centerCrop()
-            .placeholder(progressDrawable)
-            .into(holder.binding.postImage)
+            imageUrlById(post.postId)
+                .addOnSuccessListener {
+                    // Load image using link to firebase storage with postId
+                    Glide.with(holder.binding.getContext())
+                        .load(it)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .skipMemoryCache(true)
+                        .fitCenter()
+                        .placeholder(progressDrawable)
+                        .into(holder.binding.postImage)
+
+                }
+                .addOnFailureListener {
+                    Log.e("POST", "Failed to load post ", it)
+                }
+        }
+
 
         // Listener for share button using android Sharesheet to share post text to other apps
         holder.binding.sharePost.setOnClickListener {
@@ -60,13 +76,22 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
             val shareIntent = Intent.createChooser(sendIntent, null)
             it.context.startActivity(shareIntent)
         }
+
+
     }
 
 
     // Using a ViewHolder allows views to be cached for fast access
     open class PostViewHolder(val binding: PostListItemBinding): RecyclerView.ViewHolder(binding.root) {
+        var contentCollapsed: Boolean = true
         init {
-            // TODO: Multiple view types 
+            // TODO: Multiple view types
+            binding.cardView.setOnClickListener {
+                contentCollapsed = !contentCollapsed
+                TransitionManager.beginDelayedTransition(binding.cardView)
+                binding.postBody.visibility = if(contentCollapsed) View.GONE else View.VISIBLE
+
+            }
         }
     }
 
@@ -93,7 +118,7 @@ class PostItemDiffCallback: DiffUtil.ItemCallback<Post>(){
     }
 
     override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-        return newItem == oldItem
+        return newItem.postId == oldItem.postId
     }
 
 }

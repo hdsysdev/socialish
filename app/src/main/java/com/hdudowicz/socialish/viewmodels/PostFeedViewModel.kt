@@ -1,5 +1,6 @@
 package com.hdudowicz.socialish.viewmodels
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,19 +19,29 @@ class PostFeedViewModel : ViewModel() {
     val postFeedLiveData: LiveData<ArrayList<Post>> = mPostFeedLiveData
 
 
-    fun loadNewPosts(){
+    fun loadNewPosts() {
         postRepository.getPosts()
             .addOnSuccessListener { query ->
                 val postList = arrayListOf<Post>()
                 query.documents.forEach { doc ->
-                    val post = doc.toObject(Post::class.java)
-                    if (post != null){
-                        postList.add(post)
-                    }
-
+                    postList.add(
+                        Post(
+                            postId = doc.id,
+                            userId = doc.getString("userId")!!,
+                            isImagePost = doc.getBoolean("isImagePost")!!,
+                            title = doc.getString("title")!!,
+                            body = doc.getString("body")!!,
+                            isAnonymous = doc.getBoolean("isAnonymous")!!,
+                            datePosted = doc.getDate("datePosted")!!
+                        )
+                    )
                 }
                 mPostFeedLiveData.postValue(postList)
             }
+    }
+
+    fun uploadImage(uri: Uri) {
+
     }
 
 }

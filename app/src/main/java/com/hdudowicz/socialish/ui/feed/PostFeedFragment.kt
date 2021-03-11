@@ -42,6 +42,7 @@ class PostFeedFragment : Fragment() {
             postFeedAdapter.submitList(list)
             // Stop refresh animation
             binding.swiperefresh.isRefreshing = false
+            binding.postList.smoothScrollToPosition(0)
 
         })
 

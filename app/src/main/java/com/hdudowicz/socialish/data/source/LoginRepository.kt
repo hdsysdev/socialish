@@ -50,6 +50,7 @@ object LoginRepository {
 //        } else {
 //            return Resource.Error(NoSuchElementException("User not found"))
 //        }
+        // TODO: Check if user successfully logged in
         return Resource.Success(authResult.user!!)
     }
 
