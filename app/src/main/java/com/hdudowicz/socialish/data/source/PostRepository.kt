@@ -163,6 +163,10 @@ class PostRepository
     fun deleteLocalPost(context: Context, post: Post): Boolean {
         val savedPosts = getLocalPosts(context)
 
+        if (post.imageUri != null){
+            ImageUtil.deleteFile(context, post.postId)
+        }
+
         savedPosts.removeIf { post.postId == it.postId }
 
         return updateLocalPosts(context, savedPosts)
@@ -214,8 +218,7 @@ class PostRepository
         val editor = prefs.edit()
 
         if (post.imageUri != null){
-            val bitmap = ImageUtil.getImageBitmap(context, post.imageUri)
-            ImageUtil.sa
+            ImageUtil.savePostImage(context, post)
         }
 
         var newPosts = prefs.getStringSet("saved_posts", setOf())

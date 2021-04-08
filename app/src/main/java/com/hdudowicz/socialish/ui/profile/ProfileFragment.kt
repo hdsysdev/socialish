@@ -8,12 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.material.tabs.TabLayout
 import com.hdudowicz.socialish.R
 import com.hdudowicz.socialish.adapters.PostFeedAdapter
 import com.hdudowicz.socialish.databinding.FragmentProfileBinding
 import com.hdudowicz.socialish.viewmodels.ProfileViewModel
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
     private lateinit var profileViewModel: ProfileViewModel
     private lateinit var binding: FragmentProfileBinding
     private lateinit var postFeedAdapter: PostFeedAdapter
@@ -36,6 +37,8 @@ class ProfileFragment : Fragment() {
         profileViewModel.postList.observe(viewLifecycleOwner, { posts ->
             postFeedAdapter.submitList(posts)
         })
+
+        binding.tabs.addOnTabSelectedListener(this)
 
         Glide.with(binding.root.context)
             .load(profileViewModel.getProfilePicUri())
@@ -68,4 +71,15 @@ class ProfileFragment : Fragment() {
 
         profileViewModel.loadMyPosts()
     }
+
+    override fun onTabSelected(tab: TabLayout.Tab?) {
+        if (tab?.position == 0){
+            profileViewModel.loadMyPosts()
+        } else {
+            profileViewModel.loadLocalPosts()
+        }
+    }
+
+    override fun onTabUnselected(tab: TabLayout.Tab?) {}
+    override fun onTabReselected(tab: TabLayout.Tab?) {}
 }

@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Environment
 import com.bumptech.glide.Glide
 import com.hdudowicz.socialish.R
+import com.hdudowicz.socialish.data.model.Post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,17 +17,17 @@ import java.lang.NullPointerException
 
 object ImageUtil {
 
-    fun getImageBitmap(context: Context, uri: Uri){
+    fun savePostImage(context: Context, post: Post){
         CoroutineScope(Dispatchers.IO).launch {
             val bitmap = Glide.with(context)
                 .asBitmap()
-                .load(uri)
+                .load(post.imageUri!!)
                 .error(R.color.black)
                 .placeholder(android.R.drawable.progress_indeterminate_horizontal)
                 .submit()
                 .get()
 
-            saveImageLocally(context, bitmap, uri.lastPathSegment!!)
+            saveImageLocally(context, bitmap, post.postId)
         }
     }
 
