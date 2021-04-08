@@ -6,7 +6,7 @@ sealed class Resource<out T> {
     data class Error(val exception: Exception) : Resource<Nothing>()
     data class Canceled<out T>(val exception: Exception?) : Resource<T>()
 
-    // string method to display a result for debugging
+    // Method to display a string result for debugging
     override fun toString(): String {
         return when (this) {
             is Success<*> -> "Success[data=$data]"

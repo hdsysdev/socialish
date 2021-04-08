@@ -70,12 +70,13 @@
                     android:layout_weight="1" />
 
                 <ImageButton
+                    android:id="@+id/save_post"
                     android:layout_width="48dp"
                     android:layout_height="match_parent"
                     android:background="@color/transparent"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:src="@drawable/ic_favorite_border_black_36dp"
-                    android:contentDescription="Favorite button" />
+                    android:contentDescription="Save button" />
 
                 <ImageButton
                     android:id="@+id/share_post"

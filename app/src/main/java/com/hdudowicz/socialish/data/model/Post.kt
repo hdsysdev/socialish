@@ -1,13 +1,9 @@
 package com.hdudowicz.socialish.data.model
 
-import android.icu.text.RelativeDateTimeFormatter
 import android.net.Uri
-import android.text.format.DateFormat
-import android.text.format.DateUtils
-import android.widget.TextView
-import androidx.databinding.BindingAdapter
-import androidx.databinding.BindingMethod
-import com.squareup.moshi.JsonClass
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import java.util.*
 
 data class Post(
@@ -31,3 +27,4 @@ data class CreatedPost(
     val isAnonymous: Boolean? = true,
     val datePosted: Date = Calendar.getInstance().time
 )
+

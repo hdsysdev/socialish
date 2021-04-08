@@ -3,26 +3,27 @@ package com.hdudowicz.socialish.adapters
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.text.TextUtils
-import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.databinding.BindingAdapter
+import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
+import com.hdudowicz.socialish.R
 import com.hdudowicz.socialish.data.model.Post
+import com.hdudowicz.socialish.data.source.PostRepository
 import com.hdudowicz.socialish.databinding.PostListItemBinding
 import com.perfomer.blitz.setTimeAgo
 import java.util.*
 
 // Using list adapter instead of RecyclerView adapter because it automates change detection in data set using DiskUtil thus reducing boilerplate code.
 class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostItemDiffCallback()) {
+    private val postRepository = PostRepository()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         // Create post view using post list item layout binding
@@ -34,46 +35,49 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
     // Overriding onBindViewHolder to initialise Post object databinding
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = getItem(position)
-        holder.binding.post = post
+        val viewBinding = holder.binding
+        viewBinding.post = post
+
+        val context = viewBinding.root.context
 
         // Using library for auto updating time string since post created
-        holder.binding.postedDate.setTimeAgo(post.datePosted, showSeconds = false, autoUpdate = true)
+        viewBinding.postedDate.setTimeAgo(post.datePosted, showSeconds = false, autoUpdate = true)
 
         // Setting post image visibility to gone by default, visibility is changed for image posts later
-        holder.binding.postImage.visibility = View.GONE
+        viewBinding.postImage.visibility = View.GONE
 
         if (post.isImagePost){
-            holder.binding.postImage.visibility = View.VISIBLE
+            viewBinding.postImage.visibility = View.VISIBLE
 
             // Creating progress drawable to show when Glide is loading a post
-            val progressDrawable = CircularProgressDrawable(holder.binding.root.context).apply {
+            val progressDrawable = CircularProgressDrawable(context).apply {
                 strokeWidth = 6f
                 centerRadius = 35f
             }
             progressDrawable.start()
 
             // Setting post image with glide
-            Glide.with(holder.binding.root.context)
+            Glide.with(context)
                 .load(post.imageUri)
                 .fitCenter()
                 .error(ColorDrawable(Color.BLACK))
                 .placeholder(progressDrawable)
-                .into(holder.binding.postImage)
+                .into(viewBinding.postImage)
         } else {
             // Clearing glide load to prevent images being loaded in the wrong post due to recycling of views
-            Glide.with(holder.binding.root.context).clear(holder.binding.postImage)
+            Glide.with(context).clear(viewBinding.postImage)
         }
 
 
         // If post body is empty then hide it's body TextView
         if (post.body.isBlank()){
-            holder.binding.postBody.visibility = View.GONE
+            viewBinding.postBody.visibility = View.GONE
         } else {
-            holder.binding.postBody.visibility = View.VISIBLE
+            viewBinding.postBody.visibility = View.VISIBLE
         }
 
         // Listener for share button using android Sharesheet to share post text to other apps
-        holder.binding.sharePost.setOnClickListener {
+        viewBinding.sharePost.setOnClickListener {
             // Creating share text
             val shareText = "Socialish Post - \nTitle: ${post.title} \nBody: ${post.body}"
             val sendIntent: Intent = Intent().apply {
@@ -83,7 +87,39 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
                 type = "text/plain"
             }
             val shareIntent = Intent.createChooser(sendIntent, null)
-            it.context.startActivity(shareIntent)
+            context.startActivity(shareIntent)
+        }
+
+        val isPostSaved = postRepository.isPostSaved(context, post)
+        loadSaveIconInView(viewBinding.savePost, isPostSaved)
+
+        // When clicking save post button it checks if a post is saved locally and either saves or deletes it based on that then updates the save button icon
+        viewBinding.savePost.setOnClickListener {
+            val savedState = postRepository.isPostSaved(context, post)
+            val newSavedState = if (savedState){
+                postRepository.deleteLocalPost(context, post)
+            } else {
+                postRepository.savePostLocally(context, post)
+            }
+
+            loadSaveIconInView(viewBinding.savePost, newSavedState)
+        }
+    }
+
+    fun loadSaveIconInView(imageView: ImageView, saved: Boolean){
+        if (saved){
+            Glide.with(imageView.context)
+                .load(R.drawable.ic_favorite_black_36dp)
+                .fitCenter()
+                .placeholder(R.drawable.ic_favorite_border_black_36dp)
+                .into(imageView)
+        } else {
+            Glide.with(imageView.context)
+                .load(R.drawable.ic_favorite_border_black_36dp)
+                .fitCenter()
+                .placeholder(R.drawable.ic_favorite_black_36dp)
+                .into(imageView)
+
         }
     }
 
