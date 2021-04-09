@@ -12,35 +12,10 @@ import com.google.firebase.ktx.Firebase
 import com.hdudowicz.socialish.data.model.Person
 import com.hdudowicz.socialish.data.model.Resource
 import kotlinx.coroutines.tasks.await
+import java.lang.Exception
 
-object LoginRepository {
+class LoginRepository {
     private var firebaseAuth: FirebaseAuth = Firebase.auth
-    private const val TAG = "LOGIN_REPO"
-
-    fun login(email: String, pass: String): LiveData<Person> {
-        val userLiveData = MutableLiveData<Person>()
-
-        firebaseAuth.signInWithEmailAndPassword(email, pass)
-            .addOnCompleteListener { authTask ->
-                if (authTask.isSuccessful){
-                    // Check current user updated
-                    val fbUser = firebaseAuth.currentUser
-                    if (fbUser != null) {
-                        val user = Person(uid = fbUser.uid,
-                            email = fbUser.email!!,
-                            name = fbUser.displayName!!
-                        )
-                        user.isAuthenticated = true
-
-                        user.isNew = authTask.result!!.additionalUserInfo!!.isNewUser
-                        userLiveData.postValue(user)
-                    } else {
-                        Log.e(TAG, "Login failed: ", authTask.exception)
-                    }
-                }
-            }
-        return userLiveData
-    }
 
     suspend fun loginPerson(email: String, pass: String): Resource<FirebaseUser> {
         val authResult = firebaseAuth.signInWithEmailAndPassword(email, pass).await()
@@ -54,8 +29,10 @@ object LoginRepository {
         return Resource.Success(authResult.user!!)
     }
 
-    fun registerNewUser(email: String, pass: String): Task<AuthResult> {
-        return firebaseAuth.createUserWithEmailAndPassword(email, pass)
+    suspend fun registerNewUser(email: String, pass: String): Resource<FirebaseUser?> {
+        val registerStatus = firebaseAuth.createUserWithEmailAndPassword(email, pass).await()
+
+        return Resource.Success(registerStatus.user)
     }
 
     fun isUserLoggedIn(): Boolean{

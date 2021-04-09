@@ -19,20 +19,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/profile_pic"
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:src="@color/black"
-            android:contentDescription="Profile picture" />
-
         <TextView
             android:id="@+id/display_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/s_margin"
             android:textColor="@color/black"
-            android:textSize="22sp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 
@@ -65,4 +59,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/post_list_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="No Posts Saved"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/l_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabs" />
 </androidx.constraintlayout.widget.ConstraintLayout>

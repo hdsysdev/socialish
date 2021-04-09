@@ -84,6 +84,8 @@ class CreatePostActivity : AppCompatActivity() {
                     .fitCenter()
                     .placeholder(progressDrawable)
                     .into(binding.imagePreview)
+
+                binding.imageName.text = uri.path
             }
         })
 

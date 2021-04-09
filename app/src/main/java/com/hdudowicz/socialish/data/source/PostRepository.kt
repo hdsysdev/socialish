@@ -31,15 +31,17 @@ class PostRepository
     private val firebaseAuth = Firebase.auth
     private val imgageStoreRef = Firebase.storage.reference
 
-    /**
-     * Get profile pic url
-     *
-     * @return
-     */
-    fun getProfilePicUrl(): Uri?{
-        return firebaseAuth.currentUser!!.photoUrl
+    fun getDisplayName(): String? {
+        var name = firebaseAuth.currentUser?.displayName
+        if (name == "" || name == null){
+            name = firebaseAuth.currentUser?.email
+        }
+        return name
     }
 
+    fun logoutUser(){
+        firebaseAuth.signOut()
+    }
 
     /**
      * Create post

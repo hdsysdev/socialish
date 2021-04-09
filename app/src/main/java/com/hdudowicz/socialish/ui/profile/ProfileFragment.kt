@@ -36,29 +36,22 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
 
         profileViewModel.postList.observe(viewLifecycleOwner, { posts ->
             postFeedAdapter.submitList(posts)
+
+            if (profileViewModel.selectedTab == 1 && posts.size == 0){
+                binding.postListEmpty.visibility = View.VISIBLE
+            } else {
+                binding.postListEmpty.visibility = View.GONE
+            }
+        })
+
+        profileViewModel.displayName.observe(viewLifecycleOwner, { name ->
+            binding.displayName.text = name
         })
 
         binding.tabs.addOnTabSelectedListener(this)
 
-        Glide.with(binding.root.context)
-            .load(profileViewModel.getProfilePicUri())
-            .fitCenter()
-            .error(ColorDrawable(Color.BLACK))
-            .into(binding.profilePic)
 
         return binding.root
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
-            R.id.change_pic -> {
-                //TODO: Change profile pic
-
-                true
-            }
-            else -> false
-        }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -66,18 +59,28 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.logout){
+            profileViewModel.logoutUser()
+            activity?.finish()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onResume() {
         super.onResume()
 
         profileViewModel.loadMyPosts()
+        profileViewModel.loadDisplayName()
     }
 
-    override fun onTabSelected(tab: TabLayout.Tab?) {
-        if (tab?.position == 0){
+    override fun onTabSelected(tab: TabLayout.Tab) {
+        if (tab.position == 0){
             profileViewModel.loadMyPosts()
         } else {
             profileViewModel.loadLocalPosts()
         }
+        profileViewModel.selectedTab = tab.position
     }
 
     override fun onTabUnselected(tab: TabLayout.Tab?) {}

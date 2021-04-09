@@ -10,6 +10,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.hdudowicz.socialish.data.model.Resource
 import com.hdudowicz.socialish.data.source.LoginRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -17,18 +18,19 @@ class LoginViewModel : ViewModel() {
     val emailText = ObservableField<String>()
     var passText = ObservableField<String>()
 
+    private val repository = LoginRepository()
 
     private val mUserLoginState = MutableLiveData<Resource<FirebaseUser>>()
     val userLoginState: LiveData<Resource<FirebaseUser>> get() = mUserLoginState
 
-    val isLoggedIn get() = LoginRepository.isUserLoggedIn()
+    val isLoggedIn get() = repository.isUserLoggedIn()
 
     fun login() {
         // Using coroutines with IO dispatcher for network calls
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 // TODO: Message if empty fields
-                val person = LoginRepository.loginPerson(emailText.get().orEmpty(), passText.get().orEmpty())
+                val person = repository.loginPerson(emailText.get().orEmpty(), passText.get().orEmpty())
                 mUserLoginState.postValue(person)
             } catch (exception: Exception) {
                 // Don't log exception if credentials wrong, post error response object with a message to show to the user
@@ -42,16 +44,4 @@ class LoginViewModel : ViewModel() {
         }
 
     }
-
-
-    fun registerNewUser(username: String, email: String, pass: String): Task<AuthResult> {
-        return LoginRepository.registerNewUser(email, pass)
-
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-
-    }
-
 }

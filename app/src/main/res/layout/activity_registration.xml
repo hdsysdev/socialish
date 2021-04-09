@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.hdudowicz.socialish.viewmodels.LoginViewModel" />
+            type="com.hdudowicz.socialish.viewmodels.RegistrationViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -57,8 +57,9 @@
                     android:id="@+id/emailTextLayout"
                     android:layout_width="256dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/m_margin"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:hint="Email">
+                    android:hint="@string/email">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/emailText"
@@ -91,15 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/m_margin"
                     android:layout_gravity="center"
-                    android:onClick="@{() -> viewModel.login()}"
-                    android:text="Login" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/registerButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/m_margin"
-                    android:layout_gravity="center"
+                    android:onClick="@{() -> viewModel.registerNewUser()}"
                     android:text="Register" />
 
             </LinearLayout>

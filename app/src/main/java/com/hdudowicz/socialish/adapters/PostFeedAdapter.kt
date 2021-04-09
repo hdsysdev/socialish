@@ -95,14 +95,16 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
 
         // When clicking save post button it checks if a post is saved locally and either saves or deletes it based on that then updates the save button icon
         viewBinding.savePost.setOnClickListener {
-            val savedState = postRepository.isPostSaved(context, post)
-            val newSavedState = if (savedState){
+            var savedState = postRepository.isPostSaved(context, post)
+            if (savedState){
                 postRepository.deleteLocalPost(context, post)
+                savedState = false
             } else {
                 postRepository.savePostLocally(context, post)
+                savedState = true
             }
 
-            loadSaveIconInView(viewBinding.savePost, newSavedState)
+            loadSaveIconInView(viewBinding.savePost, savedState)
         }
     }
 

@@ -4,14 +4,12 @@ package com.hdudowicz.socialish.data.model
 sealed class Resource<out T> {
     data class Success<out T>(val data: T) : Resource<T>()
     data class Error(val exception: Exception) : Resource<Nothing>()
-    data class Canceled<out T>(val exception: Exception?) : Resource<T>()
 
     // Method to display a string result for debugging
     override fun toString(): String {
         return when (this) {
-            is Success<*> -> "Success[data=$data]"
-            is Error -> "Error[exception=$exception]"
-            is Canceled -> "Canceled[exception=$exception]"
+            is Error -> "Error exception=$exception"
+            is Success<*> -> "Success data=$data"
         }
     }
 }

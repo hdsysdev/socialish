@@ -1,11 +1,8 @@
 package com.hdudowicz.socialish.viewmodels
 
 import android.app.Application
-import android.content.Context
-import android.net.Uri
 import androidx.lifecycle.*
 import com.hdudowicz.socialish.data.model.Post
-import com.hdudowicz.socialish.data.model.Resource
 import com.hdudowicz.socialish.data.source.PostRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,8 +11,13 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     private val postRepository = PostRepository()
 
 
-    private val mDisplayedPostListLiveData: MutableLiveData<ArrayList<Post>> = MutableLiveData()
-    val postList: LiveData<ArrayList<Post>> = mDisplayedPostListLiveData
+    private val mDisplayedPostList: MutableLiveData<ArrayList<Post>> = MutableLiveData()
+    val postList: LiveData<ArrayList<Post>> = mDisplayedPostList
+
+    private val mDisplayName: MutableLiveData<String> = MutableLiveData("No Name")
+    val displayName: LiveData<String> = mDisplayName
+
+    var selectedTab = 0
 
     fun loadMyPosts(): LiveData<Boolean> {
         val loadSuccess = MutableLiveData<Boolean>()
@@ -23,7 +25,7 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
             val posts = postRepository.getCurrentUserPosts()
 
             if (posts != null){
-                mDisplayedPostListLiveData.postValue(posts)
+                mDisplayedPostList.postValue(posts)
                 loadSuccess.postValue(true)
             } else {
                 loadSuccess.postValue(false)
@@ -36,12 +38,16 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch(Dispatchers.IO){
             val posts = postRepository.getLocalPosts(getApplication<Application>().applicationContext)
 
-            mDisplayedPostListLiveData.postValue(posts)
+            mDisplayedPostList.postValue(posts)
         }
     }
 
-    fun getProfilePicUri(): Uri?{
-        return postRepository.getProfilePicUrl()
+    fun loadDisplayName(){
+        mDisplayName.postValue(postRepository.getDisplayName())
     }
 
+
+    fun logoutUser(){
+        postRepository.logoutUser()
+    }
 }

@@ -20,6 +20,9 @@
 
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lacus velit, molestie eu risus non, gravida placerat metus. Fusce gravida magna eu porta mollis. Sed mollis eget turpis tempus aliquet. Cras id justo at lorem venenatis efficitur. Suspendisse posuere purus sed justo pharetra, vel aliquam nisl porta. Praesent in sollicitudin nibh, id aliquam massa. In hac habitasse platea dictumst. Cras ultrices vel nisi non vestibulum. Donec eget est sed lorem luctus ornare. Nam nec velit est. Mauris id vulputate augue.</string>
     <string name="title_blank_error">Post title cannot be blank</string>
+    <string name="logout">Logout</string>
+    <string name="display_name">Display Name</string>
+    <string name="email">Email</string>
 
 
 </resources>
