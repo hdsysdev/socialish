@@ -29,10 +29,11 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         setHasOptionsMenu(true)
 
+        val layoutManager = LinearLayoutManager(context)
         // Set adapter for populating the post feed recycler view
         postFeedAdapter = PostFeedAdapter()
         binding.postList.adapter = postFeedAdapter
-        binding.postList.layoutManager = LinearLayoutManager(context)
+        binding.postList.layoutManager = layoutManager
 
         profileViewModel.postList.observe(viewLifecycleOwner, { posts ->
             postFeedAdapter.submitList(posts)
@@ -42,6 +43,7 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
             } else {
                 binding.postListEmpty.visibility = View.GONE
             }
+            layoutManager.scrollToPositionWithOffset(0, 0)
         })
 
         profileViewModel.displayName.observe(viewLifecycleOwner, { name ->
@@ -70,14 +72,24 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
     override fun onResume() {
         super.onResume()
 
-        profileViewModel.loadMyPosts()
-        profileViewModel.loadDisplayName()
+        if(profileViewModel.selectedTab == 0){
+            postFeedAdapter.isLocal = false
+            postFeedAdapter.submitList(listOf())
+            profileViewModel.loadMyPosts()
+            profileViewModel.loadDisplayName()
+        } else {
+            postFeedAdapter.isLocal = true
+            profileViewModel.loadLocalPosts()
+        }
     }
 
     override fun onTabSelected(tab: TabLayout.Tab) {
         if (tab.position == 0){
+            postFeedAdapter.isLocal = false
+            postFeedAdapter.submitList(listOf())
             profileViewModel.loadMyPosts()
         } else {
+            postFeedAdapter.isLocal = true
             profileViewModel.loadLocalPosts()
         }
         profileViewModel.selectedTab = tab.position

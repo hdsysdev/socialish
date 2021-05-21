@@ -153,7 +153,7 @@ class PostRepository
             }
         }
 
-        return postList
+        return ArrayList(postList.asReversed())
     }
 
     /**
@@ -223,16 +223,13 @@ class PostRepository
             ImageUtil.savePostImage(context, post)
         }
 
-        var newPosts = prefs.getStringSet("saved_posts", setOf())
+
+        val savedPosts = HashSet(prefs.getStringSet("saved_posts", setOf()))
 
         val postJson = PostConverter.postToJson(post)
-        newPosts?.add(postJson)
+        savedPosts.add(postJson)
 
-        if (newPosts == null){
-            newPosts = setOf<String>()
-        }
-
-        editor.putStringSet("saved_posts", newPosts)
+        editor.putStringSet("saved_posts", savedPosts)
 
         // Using commit() not apply() to instantly get if updating the local storage was successful
         return editor.commit()

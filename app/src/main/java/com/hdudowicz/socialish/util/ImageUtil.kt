@@ -2,9 +2,11 @@ package com.hdudowicz.socialish.util
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
 import com.hdudowicz.socialish.R
 import com.hdudowicz.socialish.data.model.Post
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +15,6 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
-import java.lang.NullPointerException
 
 object ImageUtil {
 
@@ -62,15 +63,17 @@ object ImageUtil {
         return savedImagePath
     }
 
+
     fun getImageFile(context: Context, name: String): File? {
         return try{
-            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                .toString() + "/saved_images", "$name.jpg")
+            File(
+                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+                    .toString() + "/saved_images", "$name.jpg"
+            )
         } catch (e: NullPointerException){
             null
         }
     }
-
 
     fun deleteFile(context: Context, name: String): Boolean?{
         return getImageFile(context, name)?.delete()

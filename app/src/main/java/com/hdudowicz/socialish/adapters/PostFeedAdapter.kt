@@ -17,12 +17,14 @@ import com.hdudowicz.socialish.R
 import com.hdudowicz.socialish.data.model.Post
 import com.hdudowicz.socialish.data.source.PostRepository
 import com.hdudowicz.socialish.databinding.PostListItemBinding
+import com.hdudowicz.socialish.util.ImageUtil
 import com.perfomer.blitz.setTimeAgo
 import java.util.*
 
 // Using list adapter instead of RecyclerView adapter because it automates change detection in data set using DiskUtil thus reducing boilerplate code.
 class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostItemDiffCallback()) {
     private val postRepository = PostRepository()
+    var isLocal = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -56,13 +58,23 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
             }
             progressDrawable.start()
 
-            // Setting post image with glide
-            Glide.with(context)
-                .load(post.imageUri)
-                .fitCenter()
-                .error(ColorDrawable(Color.BLACK))
-                .placeholder(progressDrawable)
-                .into(viewBinding.postImage)
+            // Setting post image with glide.
+            if (isLocal){
+                // Get locally saved post images using ImageUtil function to get File object of the post image
+                Glide.with(context)
+                    .load(ImageUtil.getImageFile(context, post.postId))
+                    .fitCenter()
+                    .error(ColorDrawable(Color.BLACK))
+                    .placeholder(progressDrawable)
+                    .into(viewBinding.postImage)
+            } else {
+                Glide.with(context)
+                    .load(post.imageUri)
+                    .fitCenter()
+                    .error(ColorDrawable(Color.BLACK))
+                    .placeholder(progressDrawable)
+                    .into(viewBinding.postImage)
+            }
         } else {
             // Clearing glide load to prevent images being loaded in the wrong post due to recycling of views
             Glide.with(context).clear(viewBinding.postImage)

@@ -1,6 +1,7 @@
 package com.hdudowicz.socialish.ui.login
 
 import android.app.Activity
+import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,12 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.hdudowicz.socialish.ui.MainActivity
 import com.hdudowicz.socialish.data.model.Resource
 import com.hdudowicz.socialish.databinding.ActivityLoginBinding
 import com.hdudowicz.socialish.ui.registration.RegistrationActivity
+import com.hdudowicz.socialish.util.ConnectionUtil
 import com.hdudowicz.socialish.viewmodels.LoginViewModel
+import java.net.ConnectException
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var bindings: ActivityLoginBinding
@@ -34,13 +38,19 @@ class LoginActivity : AppCompatActivity() {
                 // Start main activity when user has logged in successfully
                 startMainActivity()
             } else if (resource is Resource.Error) {
+
                 // If exception is from invalid credentials, tell user to try again
-                if (resource.exception is FirebaseAuthInvalidCredentialsException){
+                if (resource.exception is FirebaseAuthInvalidCredentialsException || resource.exception is FirebaseAuthInvalidUserException){
                     Snackbar.make(bindings.loginActivityContent, "Username or password is incorrect. Try again", Snackbar.LENGTH_SHORT)
                         .show()
-                } else {
+                } else if (resource.exception is ConnectException){
+                    Snackbar.make(bindings.loginActivityContent, "Please connect to the internet.", Snackbar.LENGTH_SHORT)
+                        .show()
+                }  else {
                     Log.e("LOGIN", "login exception", resource.exception)
                     FirebaseCrashlytics.getInstance().recordException(resource.exception)
+                    Snackbar.make(bindings.loginActivityContent, "Login error.", Snackbar.LENGTH_SHORT)
+                        .show()
                 }
             }
         })

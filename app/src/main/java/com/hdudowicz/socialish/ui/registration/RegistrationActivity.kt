@@ -14,6 +14,7 @@ import com.hdudowicz.socialish.databinding.ActivityRegistrationBinding
 import com.hdudowicz.socialish.ui.MainActivity
 import com.hdudowicz.socialish.viewmodels.RegistrationViewModel
 import es.dmoral.toasty.Toasty
+import java.net.ConnectException
 
 class RegistrationActivity : AppCompatActivity() {
     private lateinit var bindings: ActivityRegistrationBinding
@@ -37,6 +38,10 @@ class RegistrationActivity : AppCompatActivity() {
                 FirebaseCrashlytics.getInstance().recordException(resource.exception)
 
                 when (resource.exception) {
+                    is ConnectException -> {
+                        Snackbar.make(bindings.loginActivityContent, "Please connect to the internet.", Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
                     is FirebaseAuthUserCollisionException -> {
                         Snackbar.make(bindings.loginActivityContent, "User with this email already exists", Snackbar.LENGTH_SHORT)
                             .show()
