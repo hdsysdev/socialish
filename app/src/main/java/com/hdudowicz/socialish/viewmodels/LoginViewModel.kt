@@ -1,5 +1,6 @@
 package com.hdudowicz.socialish.viewmodels
 
+import android.view.View
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.google.android.gms.tasks.Task
@@ -26,8 +27,10 @@ class LoginViewModel : ViewModel() {
     val userLoginState: LiveData<Resource<FirebaseUser>> get() = mUserLoginState
 
     val isLoggedIn get() = repository.isUserLoggedIn()
+    var progressBarVisibility = View.GONE
 
     fun login() {
+        progressBarVisibility = View.VISIBLE
         // Using coroutines with IO dispatcher for network calls
         viewModelScope.launch(Dispatchers.IO) {
             // Check if device is connected to the internet before trying to log in

@@ -23,6 +23,8 @@
     <string name="logout">Logout</string>
     <string name="display_name">Display Name</string>
     <string name="email">Email</string>
+    <string name="no_posts_written">No posts written.</string>
+    <string name="no_posts_saved">No posts saved.</string>
 
 
 </resources>

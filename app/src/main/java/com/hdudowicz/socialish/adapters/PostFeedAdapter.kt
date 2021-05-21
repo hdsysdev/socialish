@@ -120,18 +120,18 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
         }
     }
 
-    fun loadSaveIconInView(imageView: ImageView, saved: Boolean){
+    private fun loadSaveIconInView(imageView: ImageView, saved: Boolean){
         if (saved){
             Glide.with(imageView.context)
-                .load(R.drawable.ic_favorite_black_36dp)
+                .load(R.drawable.ic_baseline_save_24)
                 .fitCenter()
-                .placeholder(R.drawable.ic_favorite_border_black_36dp)
+                .placeholder(R.drawable.ic_outline_save_24)
                 .into(imageView)
         } else {
             Glide.with(imageView.context)
-                .load(R.drawable.ic_favorite_border_black_36dp)
+                .load(R.drawable.ic_outline_save_24)
                 .fitCenter()
-                .placeholder(R.drawable.ic_favorite_black_36dp)
+                .placeholder(R.drawable.ic_baseline_save_24)
                 .into(imageView)
 
         }

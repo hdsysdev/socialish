@@ -2,9 +2,11 @@ package com.hdudowicz.socialish.ui.login
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
@@ -17,6 +19,8 @@ import com.hdudowicz.socialish.databinding.ActivityLoginBinding
 import com.hdudowicz.socialish.ui.registration.RegistrationActivity
 import com.hdudowicz.socialish.util.ConnectionUtil
 import com.hdudowicz.socialish.viewmodels.LoginViewModel
+import es.dmoral.toasty.Toasty
+import java.lang.IllegalArgumentException
 import java.net.ConnectException
 
 class LoginActivity : AppCompatActivity() {
@@ -30,8 +34,8 @@ class LoginActivity : AppCompatActivity() {
         setContentView(bindings.root)
         setSupportActionBar(bindings.toolbar)
 
-
         bindings.viewModel = viewModel
+        bindings.clickHandler = LoginClickHandler()
 
         viewModel.userLoginState.observe(this, { resource ->
             if (resource is Resource.Success) {
@@ -40,24 +44,26 @@ class LoginActivity : AppCompatActivity() {
             } else if (resource is Resource.Error) {
 
                 // If exception is from invalid credentials, tell user to try again
-                if (resource.exception is FirebaseAuthInvalidCredentialsException || resource.exception is FirebaseAuthInvalidUserException){
-                    Snackbar.make(bindings.loginActivityContent, "Username or password is incorrect. Try again", Snackbar.LENGTH_SHORT)
-                        .show()
-                } else if (resource.exception is ConnectException){
-                    Snackbar.make(bindings.loginActivityContent, "Please connect to the internet.", Snackbar.LENGTH_SHORT)
-                        .show()
-                }  else {
-                    Log.e("LOGIN", "login exception", resource.exception)
-                    FirebaseCrashlytics.getInstance().recordException(resource.exception)
-                    Snackbar.make(bindings.loginActivityContent, "Login error.", Snackbar.LENGTH_SHORT)
-                        .show()
+                when (resource.exception) {
+                    is FirebaseAuthInvalidCredentialsException, is FirebaseAuthInvalidUserException -> {
+                        Toasty.error(bindings.root.context, "Username or password is incorrect. Try again").show()
+                    }
+                    is ConnectException -> {
+                        Toasty.warning(bindings.root.context, "Please connect to the internet").show()
+                    }
+                    is IllegalArgumentException -> {
+                        Toasty.error(bindings.root.context, "Enter a valid username and password").show()
+                    }
+                    else -> {
+                        Log.e("LOGIN", "login exception", resource.exception)
+                        // Record unexpected exception to Firebase Crashlytics
+                        FirebaseCrashlytics.getInstance().recordException(resource.exception)
+                        Toasty.error(bindings.root.context, "Unexpected error").show()
+                    }
                 }
             }
+            bindings.progressBar.visibility = View.GONE
         })
-
-        bindings.registerButton.setOnClickListener {
-            startActivity(Intent(this, RegistrationActivity::class.java))
-        }
     }
 
     override fun onStart() {
@@ -66,11 +72,6 @@ class LoginActivity : AppCompatActivity() {
         if(viewModel.isLoggedIn){
             startMainActivity()
         }
-
-    }
-
-    private fun startMainActivity(){
-        startActivity(Intent(this, MainActivity::class.java))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -84,4 +85,21 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun startMainActivity(){
+        startActivity(Intent(this, MainActivity::class.java))
+    }
+
+    inner class LoginClickHandler(){
+        fun login(){
+            if (bindings.emailText.text.isNullOrBlank() || bindings.passwordText.text.isNullOrBlank()){
+                Toasty.error(bindings.root.context, "Enter a username and password").show()
+            } else {
+                bindings.progressBar.visibility = View.VISIBLE
+                viewModel.login()
+            }
+        }
+        fun startRegistration(){
+            startActivity(Intent(baseContext, RegistrationActivity::class.java))
+        }
+    }
 }

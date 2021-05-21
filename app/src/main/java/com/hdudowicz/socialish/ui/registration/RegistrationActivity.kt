@@ -3,6 +3,7 @@ package com.hdudowicz.socialish.ui.registration
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
@@ -14,6 +15,7 @@ import com.hdudowicz.socialish.databinding.ActivityRegistrationBinding
 import com.hdudowicz.socialish.ui.MainActivity
 import com.hdudowicz.socialish.viewmodels.RegistrationViewModel
 import es.dmoral.toasty.Toasty
+import java.lang.IllegalArgumentException
 import java.net.ConnectException
 
 class RegistrationActivity : AppCompatActivity() {
@@ -26,7 +28,9 @@ class RegistrationActivity : AppCompatActivity() {
         bindings = ActivityRegistrationBinding.inflate(layoutInflater)
         setContentView(bindings.root)
         setSupportActionBar(bindings.toolbar)
+
         bindings.viewModel = viewModel
+        bindings.clickHandler = RegistrationClickHandler()
 
         viewModel.userRegisterState.observe(this, { resource ->
             if (resource is Resource.Success && resource.data != null) {
@@ -39,22 +43,24 @@ class RegistrationActivity : AppCompatActivity() {
 
                 when (resource.exception) {
                     is ConnectException -> {
-                        Snackbar.make(bindings.loginActivityContent, "Please connect to the internet.", Snackbar.LENGTH_SHORT)
-                            .show()
+                        Toasty.warning(bindings.root.context, "Please connect to the internet").show()
                     }
                     is FirebaseAuthUserCollisionException -> {
-                        Snackbar.make(bindings.loginActivityContent, "User with this email already exists", Snackbar.LENGTH_SHORT)
-                            .show()
+                        Toasty.error(bindings.root.context, "User with this email already exists").show()
+
                     }
                     is FirebaseAuthInvalidCredentialsException -> {
                         Toasty.error(this, "Please use a valid email").show()
                     }
+                    is IllegalArgumentException -> {
+                        Toasty.error(this, "Please enter an email and password").show()
+                    }
                     else -> {
-                        Snackbar.make(bindings.loginActivityContent, "Cant register user", Snackbar.LENGTH_SHORT)
-                            .show()
+                        Toasty.error(this, "Unexpected error").show()
                     }
                 }
             }
+            bindings.progressBar.visibility = View.GONE
         })
     }
 
@@ -73,4 +79,15 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
+    inner class RegistrationClickHandler(){
+        fun register(){
+            if (bindings.emailText.text.isNullOrBlank() || bindings.passwordText.text.isNullOrBlank()){
+                Toasty.error(bindings.root.context, "Enter a username and password").show()
+            } else {
+                bindings.progressBar.visibility = View.VISIBLE
+                viewModel.registerNewUser()
+            }
+        }
+
+    }
 }

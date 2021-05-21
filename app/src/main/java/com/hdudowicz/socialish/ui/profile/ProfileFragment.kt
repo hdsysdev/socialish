@@ -38,12 +38,19 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
         profileViewModel.postList.observe(viewLifecycleOwner, { posts ->
             postFeedAdapter.submitList(posts)
 
-            if (profileViewModel.selectedTab == 1 && posts.size == 0){
+            if (profileViewModel.selectedTab == 0 && posts.size == 0){
+                binding.postListEmpty.text = getString(R.string.no_posts_written)
+                binding.postListEmpty.visibility = View.VISIBLE
+            } else if (profileViewModel.selectedTab == 1 && posts.size == 0){
+                binding.postListEmpty.text = getString(R.string.no_posts_saved)
                 binding.postListEmpty.visibility = View.VISIBLE
             } else {
                 binding.postListEmpty.visibility = View.GONE
             }
             layoutManager.scrollToPositionWithOffset(0, 0)
+
+            // Hiding progress bar after posts are loaded
+            binding.progressIndicator.visibility = View.GONE
         })
 
         profileViewModel.displayName.observe(viewLifecycleOwner, { name ->
@@ -71,6 +78,8 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
 
     override fun onResume() {
         super.onResume()
+        // Showing progress bar while refreshing posts
+        binding.progressIndicator.visibility = View.VISIBLE
 
         if(profileViewModel.selectedTab == 0){
             postFeedAdapter.isLocal = false
@@ -84,6 +93,8 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
     }
 
     override fun onTabSelected(tab: TabLayout.Tab) {
+        // Showing progress bar while loading posts
+        binding.progressIndicator.visibility = View.VISIBLE
         if (tab.position == 0){
             postFeedAdapter.isLocal = false
             postFeedAdapter.submitList(listOf())

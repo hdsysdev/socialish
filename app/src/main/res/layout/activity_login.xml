@@ -8,6 +8,9 @@
         <variable
             name="viewModel"
             type="com.hdudowicz.socialish.viewmodels.LoginViewModel" />
+        <variable
+            name="clickHandler"
+            type="com.hdudowicz.socialish.ui.login.LoginActivity.LoginClickHandler" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -91,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/m_margin"
                     android:layout_gravity="center"
-                    android:onClick="@{() -> viewModel.login()}"
+                    android:onClick="@{() -> clickHandler.login()}"
                     android:text="Login" />
 
                 <com.google.android.material.button.MaterialButton
@@ -100,11 +103,22 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/m_margin"
                     android:layout_gravity="center"
+                    android:onClick="@{() -> clickHandler.startRegistration()}"
                     android:text="Register" />
 
             </LinearLayout>
 
-
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:id="@+id/progressBar"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.2"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
