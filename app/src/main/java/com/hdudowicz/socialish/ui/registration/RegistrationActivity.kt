@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -29,6 +28,8 @@ class RegistrationActivity : AppCompatActivity() {
         setContentView(bindings.root)
         setSupportActionBar(bindings.toolbar)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         bindings.viewModel = viewModel
         bindings.clickHandler = RegistrationClickHandler()
 
@@ -47,7 +48,6 @@ class RegistrationActivity : AppCompatActivity() {
                     }
                     is FirebaseAuthUserCollisionException -> {
                         Toasty.error(bindings.root.context, "User with this email already exists").show()
-
                     }
                     is FirebaseAuthInvalidCredentialsException -> {
                         Toasty.error(this, "Please use a valid email").show()
@@ -79,7 +79,12 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
-    inner class RegistrationClickHandler(){
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
+    }
+
+    inner class RegistrationClickHandler{
         fun register(){
             if (bindings.emailText.text.isNullOrBlank() || bindings.passwordText.text.isNullOrBlank()){
                 Toasty.error(bindings.root.context, "Enter a username and password").show()
@@ -88,6 +93,5 @@ class RegistrationActivity : AppCompatActivity() {
                 viewModel.registerNewUser()
             }
         }
-
     }
 }

@@ -55,7 +55,6 @@ class LoginActivity : AppCompatActivity() {
                         Toasty.error(bindings.root.context, "Enter a valid username and password").show()
                     }
                     else -> {
-                        Log.e("LOGIN", "login exception", resource.exception)
                         // Record unexpected exception to Firebase Crashlytics
                         FirebaseCrashlytics.getInstance().recordException(resource.exception)
                         Toasty.error(bindings.root.context, "Unexpected error").show()
@@ -90,16 +89,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     inner class LoginClickHandler(){
-        fun login(){
+        fun login(view: View){
             if (bindings.emailText.text.isNullOrBlank() || bindings.passwordText.text.isNullOrBlank()){
-                Toasty.error(bindings.root.context, "Enter a username and password").show()
+                Toasty.error(view.context, "Enter a username and password").show()
             } else {
                 bindings.progressBar.visibility = View.VISIBLE
                 viewModel.login()
             }
         }
-        fun startRegistration(){
-            startActivity(Intent(baseContext, RegistrationActivity::class.java))
+        fun startRegistration(view: View){
+            startActivity(Intent(view.context, RegistrationActivity::class.java))
         }
     }
 }

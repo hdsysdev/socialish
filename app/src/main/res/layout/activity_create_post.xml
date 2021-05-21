@@ -38,7 +38,7 @@
                     android:layout_height="?attr/actionBarSize"
                     android:elevation="0dp"
                     app:navigationIcon="@drawable/ic_close_24dp"
-                    app:title="New Post" />
+                    app:title="@string/new_post" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/l_margin"
-            android:contentDescription="Submit Post"
+            android:contentDescription="@string/submit_post"
             app:srcCompat="@drawable/ic_add_24dp"
             app:fabSize="mini"
             app:layout_constraintTop_toTopOf="@id/appbar"
@@ -74,7 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/s_margin"
-                android:hint="Title"
+                android:hint="@string/title"
                 app:errorEnabled="true"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/m_margin"
                 app:errorEnabled="true"
-                android:hint="Body"
+                android:hint="@string/body"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -115,7 +115,7 @@
                     android:layout_height="match_parent"
                     android:minWidth="80dp"
                     android:src="@color/black"
-                    android:contentDescription="Post Image Preview" />
+                    android:contentDescription="@string/post_image_preview" />
 
                 <TextView
                     android:id="@+id/image_name"
@@ -125,7 +125,7 @@
                     android:layout_toStartOf="@+id/add_image_button"
                     android:layout_toEndOf="@id/image_preview"
                     android:gravity="center_vertical"
-                    android:text="No Image"
+                    android:text="@string/no_image"
                     android:textSize="18sp"
                     android:ellipsize="end"/>
 
@@ -135,13 +135,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="Add Image"
+                    android:text="@string/add_image"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     app:icon="@drawable/ic_add_24dp" />
 
             </RelativeLayout>
-
         </LinearLayout>
 
 

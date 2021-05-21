@@ -39,7 +39,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:onClick="@{handler.onAddPostClicked}"
-            android:contentDescription="Create Post"
+            android:contentDescription="@string/create_post"
             app:srcCompat="@drawable/ic_add_24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

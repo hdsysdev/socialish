@@ -12,20 +12,20 @@ import com.google.android.material.tabs.TabLayout
 import com.hdudowicz.socialish.R
 import com.hdudowicz.socialish.adapters.PostFeedAdapter
 import com.hdudowicz.socialish.databinding.FragmentProfileBinding
+import com.hdudowicz.socialish.viewmodels.LoginViewModel
 import com.hdudowicz.socialish.viewmodels.ProfileViewModel
 
 class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
-    private lateinit var profileViewModel: ProfileViewModel
     private lateinit var binding: FragmentProfileBinding
     private lateinit var postFeedAdapter: PostFeedAdapter
+    private val profileViewModel by lazy {ViewModelProvider(this).get(ProfileViewModel::class.java) }
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        profileViewModel =
-                ViewModelProvider(this).get(ProfileViewModel::class.java)
+
         binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         setHasOptionsMenu(true)
 

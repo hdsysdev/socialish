@@ -106,7 +106,6 @@ class CreatePostActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-
         finish()
         return true
     }

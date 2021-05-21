@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/m_margin"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:hint="Password">
+                    android:hint="@string/password">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/passwordText"
@@ -96,7 +96,7 @@
                     android:layout_marginHorizontal="@dimen/m_margin"
                     android:layout_gravity="center"
                     android:onClick="@{() -> clickHandler.register()}"
-                    android:text="Register" />
+                    android:text="@string/register" />
 
             </LinearLayout>
 

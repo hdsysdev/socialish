@@ -61,7 +61,7 @@
                     android:layout_width="256dp"
                     android:layout_height="wrap_content"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:hint="Email">
+                    android:hint="@string/email">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/emailText"
@@ -78,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/m_margin"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:hint="Password">
+                    android:hint="@string/password">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/passwordText"
@@ -94,8 +94,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/m_margin"
                     android:layout_gravity="center"
-                    android:onClick="@{() -> clickHandler.login()}"
-                    android:text="Login" />
+                    android:onClick="@{clickHandler.login}"
+                    android:text="@string/login" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/registerButton"
@@ -103,8 +103,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/m_margin"
                     android:layout_gravity="center"
-                    android:onClick="@{() -> clickHandler.startRegistration()}"
-                    android:text="Register" />
+                    android:onClick="@{clickHandler.startRegistration}"
+                    android:text="@string/register" />
 
             </LinearLayout>
 

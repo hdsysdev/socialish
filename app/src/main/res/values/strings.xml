@@ -25,6 +25,24 @@
     <string name="email">Email</string>
     <string name="no_posts_written">No posts written.</string>
     <string name="no_posts_saved">No posts saved.</string>
+    <string name="create_post">Create Post</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="new_post">New Post</string>
+    <string name="submit_post">Submit Post</string>
+    <string name="title">Title</string>
+    <string name="body">Body</string>
+    <string name="post_image_preview">Post Image Preview</string>
+    <string name="no_image">No Image</string>
+    <string name="add_image">Add Image</string>
+    <string name="save_button">Save button</string>
+    <string name="share_button">Share button</string>
+    <string name="post_image">Post image</string>
+    <string name="my_posts">My Posts</string>
+    <string name="saved">Saved</string>
+    <string name="no_saved_posts">No Posts Saved</string>
 
 
 </resources>

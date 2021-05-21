@@ -20,9 +20,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class PostFeedFragment : Fragment() {
-
+    private val viewModel by lazy { ViewModelProvider(this).get(PostFeedViewModel::class.java) }
     private lateinit var binding: FragmentNewsFeedBinding
-    private lateinit var viewModel: PostFeedViewModel
     private lateinit var postFeedAdapter: PostFeedAdapter
 
     override fun onCreateView(
@@ -30,8 +29,6 @@ class PostFeedFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        viewModel =
-                ViewModelProvider(this).get(PostFeedViewModel::class.java)
         binding = FragmentNewsFeedBinding.inflate(layoutInflater, container, false)
         binding.handler = PostFeedClickHandler()
         // Show options menu items
