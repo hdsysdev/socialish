@@ -22,7 +22,6 @@
     <string name="title_blank_error">Post title cannot be blank</string>
     <string name="logout">Logout</string>
     <string name="display_name">Display Name</string>
-    <string name="email">Email</string>
     <string name="no_posts_written">No posts written.</string>
     <string name="no_posts_saved">No posts saved.</string>
     <string name="create_post">Create Post</string>

@@ -21,28 +21,35 @@ import com.hdudowicz.socialish.util.ImageUtil
 import com.perfomer.blitz.setTimeAgo
 import java.util.*
 
-// Using list adapter instead of RecyclerView adapter because it automates change detection in data set using DiskUtil thus reducing boilerplate code.
+/**
+ * Adapter class for populating a RecyclerView with Post objects
+ * List adapter used instead of RecyclerView adapter because it automates change detection in data set using DiskUtil, reducing boilerplate code.
+ *
+ * @constructor Create empty Post feed adapter
+ */
 class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostItemDiffCallback()) {
     private val postRepository = PostRepository()
     var isLocal = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        // Create post view using post list item layout binding
+        // Create post item view using the PostListItemBinding generated binding class
         val bind = PostListItemBinding.inflate(layoutInflater, parent, false)
-
+        // Returning new view holder with post item binding
         return PostViewHolder(bind)
     }
 
-    // Overriding onBindViewHolder to initialise Post object databinding
+    // Overriding onBindViewHolder to initialise Post item view
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+        // Getting current Post object by list item position
         val post = getItem(position)
         val viewBinding = holder.binding
+        // Setting binding post object to use data binding
         viewBinding.post = post
 
         val context = viewBinding.root.context
 
-        // Using library for auto updating time string since post created
+        // Using library for an auto updating string showing the time since the post was created
         viewBinding.postedDate.setTimeAgo(post.datePosted, showSeconds = false, autoUpdate = true)
 
         // Setting post image visibility to gone by default, visibility is changed for image posts later
