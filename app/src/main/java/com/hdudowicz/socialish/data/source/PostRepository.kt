@@ -21,16 +21,23 @@ import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 
 /**
- * Post repository
+ * Repository for the MainActivity contains functions related to querying, creating and deleting posts on
+ * Firebase.
  *
- * @constructor Create empty Post repository
+ * @constructor Create post repository
  */
 class PostRepository
 {
+    // Firebase Firestore, Auth and Cloud Storage instances allowing access to firebase features
     private val firestore = Firebase.firestore
     private val firebaseAuth = Firebase.auth
     private val imgageStoreRef = Firebase.storage.reference
 
+    /**
+     * Get display name of the currently logged in user
+     *
+     * @return returns the name of the logged in user or null
+     */
     fun getDisplayName(): String? {
         var name = firebaseAuth.currentUser?.displayName
         if (name == "" || name == null){
@@ -39,26 +46,29 @@ class PostRepository
         return name
     }
 
+    /**
+     * Logout user from Firebase Auth
+     */
     fun logoutUser(){
         firebaseAuth.signOut()
     }
 
     /**
-     * Create post
+     * Create a new post
      *
      * @param title
      * @param body
      * @param isAnon
      * @return
-     *///TODO: Convert to suspending function
-    fun createPost(title: String, body: String, isAnon: Boolean): Task<DocumentReference> {
+     */
+    suspend fun createPost(title: String, body: String, isAnon: Boolean): DocumentReference {
         val post = CreatedPost(
             userId = firebaseAuth.currentUser?.uid,
             title = title,
             body = body,
             isAnonymous = isAnon
         )
-        return firestore.collection("posts").add(post)
+        return firestore.collection("posts").add(post).await()
     }
 
 
@@ -267,31 +277,6 @@ class PostRepository
             )
         }
         return postList
-    }
-
-    /**
-     * Get posts after
-     *
-     * @param index
-     * @return
-     */
-    fun getPostsAfter(index: Int): Task<QuerySnapshot> {
-        return firestore.collection("posts")
-            .orderBy("datePosted")
-            .startAfter(index)
-            .limit(25)
-            .get()
-    }
-
-    /**
-     * Upload profile image
-     *
-     * @param uri
-     * @return
-     */
-    fun uploadProfileImage(uri: Uri): UploadTask {
-        val profImgRef = imgageStoreRef.child(firebaseAuth.uid!!)
-        return profImgRef.putFile(uri)
     }
 
     /**

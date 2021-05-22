@@ -7,6 +7,7 @@ import androidx.lifecycle.*
 import com.hdudowicz.socialish.data.source.PostRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class CreatePostViewModel : ViewModel() {
     // Email and pass variables updated using 2 way binding in layout
@@ -24,13 +25,7 @@ class CreatePostViewModel : ViewModel() {
 
     fun isTitleBlank() = titleText.get().isNullOrBlank()
 
-//    fun getCurrentPost(): CreatedPost {
-//        return CreatedPost(
-//            title = titleText.get(),
-//            body = bodyText.get(),
-//            isAnonymous = isAnonPost.get()
-//        )
-//    }
+
 
     fun createPost(): LiveData<Boolean>{
         return if (imageUri.value == null){
@@ -40,27 +35,27 @@ class CreatePostViewModel : ViewModel() {
         }
     }
 
-    fun createNonImagePost(): LiveData<Boolean> {
+    private fun createNonImagePost(): LiveData<Boolean> {
         val postCreated = MutableLiveData<Boolean>()
         mCreatingPost.postValue(true)
-        postRepository.createPost(titleText.get()!!, bodyText.get()!!, isAnonPost.get()!!)
-            .addOnCompleteListener {
-                // Show progress bar when creating a post
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                postRepository.createPost(titleText.get()!!, bodyText.get()!!, isAnonPost.get()!!)
+
+                // Stop showing progress bar after creating a post
                 mCreatingPost.postValue(false)
+                postCreated.postValue(true)
 
-                if (it.isSuccessful) {
-                    postCreated.postValue(true)
-                } else {
-                    Log.e("CREATE_POST", "Error creating post ", it.exception)
-                    postCreated.postValue(false)
-                }
+            } catch (exception: Exception){
+                Log.e("CREATE_POST", "Error creating post ", exception)
+                postCreated.postValue(false)
             }
-
+        }
 
         return postCreated
     }
 
-    fun createImagePostNew(title: String, body: String, isAnon:Boolean, imgUri: Uri): LiveData<Boolean>{
+    private fun createImagePostNew(title: String, body: String, isAnon:Boolean, imgUri: Uri): LiveData<Boolean>{
         val postCreated = MutableLiveData<Boolean>()
 
         // Create post using coroutine then post success status boolean to returned live data

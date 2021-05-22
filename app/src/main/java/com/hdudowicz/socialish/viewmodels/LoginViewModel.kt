@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.hdudowicz.socialish.data.model.Resource
@@ -39,13 +40,14 @@ class LoginViewModel : ViewModel() {
                 mUserLoginState.postValue(Resource.Error(ConnectException()))
             } else {
                 try {
-                    // TODO: Message if empty fields
+
                     val person = repository.loginPerson(emailText.get().orEmpty(), passText.get().orEmpty())
                     mUserLoginState.postValue(person)
                 } catch (exception: Exception) {
 
                     // Don't log exception if credentials wrong, post error response object with a message to show to the user
-                    if (exception !is FirebaseAuthInvalidCredentialsException) {
+                    if (exception !is FirebaseAuthInvalidCredentialsException ||
+                        exception !is FirebaseAuthInvalidUserException) {
                         // Logging other exceptions with crashlytics
                         FirebaseCrashlytics.getInstance().log("Error logging in user " + emailText)
                         FirebaseCrashlytics.getInstance().recordException(exception)
