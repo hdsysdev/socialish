@@ -1,6 +1,5 @@
 package com.hdudowicz.socialish.viewmodels
 
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,8 +12,8 @@ import kotlinx.coroutines.launch
 class PostFeedViewModel : ViewModel() {
     private val postRepository = PostRepository()
 
-    private val mPostFeedLiveData: MutableLiveData<ArrayList<Post>> = MutableLiveData()
-    val postFeedLiveData: LiveData<ArrayList<Post>> = mPostFeedLiveData
+    private val mPostListLiveData: MutableLiveData<ArrayList<Post>> = MutableLiveData()
+    val postListLiveData: LiveData<ArrayList<Post>> = mPostListLiveData
 
 
     fun loadNewPosts(): LiveData<Boolean> {
@@ -23,7 +22,7 @@ class PostFeedViewModel : ViewModel() {
             val posts = postRepository.getPosts()
 
             if (posts != null){
-                mPostFeedLiveData.postValue(posts)
+                mPostListLiveData.postValue(posts)
                 loadSuccess.postValue(true)
             } else {
                 loadSuccess.postValue(false)

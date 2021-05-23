@@ -7,9 +7,9 @@ import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import java.util.*
 
 /**
- * Data class for handling posts from firebase
+ * Data class for handling posts received from firebase
  *
- * @property postId post object ID
+ * @property postId post firebase document ID
  * @property userId ID of user who created the post
  * @property isImagePost is this  an image containing post
  * @property imageUri optional URI of the post image
@@ -33,7 +33,8 @@ data class Post(
 )
 
 /**
- * Data class for submitting new posts to Firebase
+ * Data class for creating new posts to Firebase. Contains default values for some vars.
+ * Most variables can be null to prevent issue with Moshi JSON serialisation
  *
  * @property userId Auth user ID
  * @property isImagePost is this an image containing post
@@ -42,9 +43,9 @@ data class Post(
  * @property isAnonymous should post be anonymous
  * @property datePosted date when the post was made
  *
- * @constructor Create new CreatedPost
+ * @constructor Create new CreatingPost
  */
-data class CreatedPost(
+data class CreatingPost(
     val userId: String?,
     @field:JvmField
     val isImagePost: Boolean? = false,

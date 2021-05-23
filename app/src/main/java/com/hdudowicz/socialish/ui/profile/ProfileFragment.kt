@@ -12,6 +12,7 @@ import com.google.android.material.tabs.TabLayout
 import com.hdudowicz.socialish.R
 import com.hdudowicz.socialish.adapters.PostFeedAdapter
 import com.hdudowicz.socialish.databinding.FragmentProfileBinding
+import com.hdudowicz.socialish.util.DialogUtil
 import com.hdudowicz.socialish.viewmodels.LoginViewModel
 import com.hdudowicz.socialish.viewmodels.ProfileViewModel
 
@@ -34,6 +35,11 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
         postFeedAdapter = PostFeedAdapter()
         binding.postList.adapter = postFeedAdapter
         binding.postList.layoutManager = layoutManager
+
+        // Observe if the adapter requires posts to be reloaded due to an action
+        postFeedAdapter.shouldReload.observe(viewLifecycleOwner, { shouldReload ->
+            loadPostsByTab()
+        })
 
         profileViewModel.postList.observe(viewLifecycleOwner, { posts ->
             postFeedAdapter.submitList(posts)
@@ -59,6 +65,8 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
 
         binding.tabs.addOnTabSelectedListener(this)
 
+        // Setting default selected tab
+        postFeedAdapter.selectedTab = 0
 
         return binding.root
     }
@@ -70,8 +78,7 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.logout){
-            profileViewModel.logoutUser()
-            activity?.finish()
+            DialogUtil.showLogoutDialog(requireActivity())
         }
         return super.onOptionsItemSelected(item)
     }
@@ -80,30 +87,29 @@ class ProfileFragment : Fragment(), TabLayout.OnTabSelectedListener {
         super.onResume()
         // Showing progress bar while refreshing posts
         binding.progressIndicator.visibility = View.VISIBLE
+        profileViewModel.loadDisplayName()
 
-        if(profileViewModel.selectedTab == 0){
-            postFeedAdapter.isLocal = false
+        loadPostsByTab()
+    }
+
+    private fun loadPostsByTab(){
+        if (profileViewModel.selectedTab == 0){
             postFeedAdapter.submitList(listOf())
             profileViewModel.loadMyPosts()
-            profileViewModel.loadDisplayName()
         } else {
-            postFeedAdapter.isLocal = true
             profileViewModel.loadLocalPosts()
+            postFeedAdapter.notifyDataSetChanged()
         }
     }
 
     override fun onTabSelected(tab: TabLayout.Tab) {
         // Showing progress bar while loading posts
         binding.progressIndicator.visibility = View.VISIBLE
-        if (tab.position == 0){
-            postFeedAdapter.isLocal = false
-            postFeedAdapter.submitList(listOf())
-            profileViewModel.loadMyPosts()
-        } else {
-            postFeedAdapter.isLocal = true
-            profileViewModel.loadLocalPosts()
-        }
+
         profileViewModel.selectedTab = tab.position
+        postFeedAdapter.selectedTab = tab.position
+
+        loadPostsByTab()
     }
 
     override fun onTabUnselected(tab: TabLayout.Tab?) {}

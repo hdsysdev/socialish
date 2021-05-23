@@ -45,9 +45,4 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
     fun loadDisplayName(){
         mDisplayName.postValue(postRepository.getDisplayName())
     }
-
-
-    fun logoutUser(){
-        postRepository.logoutUser()
-    }
 }

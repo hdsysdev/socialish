@@ -42,6 +42,9 @@
     <string name="my_posts">My Posts</string>
     <string name="saved">Saved</string>
     <string name="no_saved_posts">No Posts Saved</string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="delete_post_button">Delete post button</string>
 
 
 </resources>

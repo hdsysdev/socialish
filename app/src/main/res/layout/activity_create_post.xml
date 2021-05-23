@@ -7,6 +7,9 @@
         <variable
             name="viewModel"
             type="com.hdudowicz.socialish.viewmodels.CreatePostViewModel" />
+        <variable
+            name="handler"
+            type="com.hdudowicz.socialish.ui.createpost.CreatePostActivity.CreatePostClickHandler" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -51,6 +54,7 @@
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/l_margin"
             android:contentDescription="@string/submit_post"
+            android:onClick="@{handler::createPost}"
             app:srcCompat="@drawable/ic_add_24dp"
             app:fabSize="mini"
             app:layout_constraintTop_toTopOf="@id/appbar"
@@ -138,6 +142,7 @@
                     android:text="@string/add_image"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
+                    android:onClick="@{handler::selectImage}"
                     app:icon="@drawable/ic_add_24dp" />
 
             </RelativeLayout>

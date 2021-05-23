@@ -21,11 +21,9 @@ class CreatePostViewModel : ViewModel() {
     val postRepository = PostRepository()
 
     private val mCreatingPost = MutableLiveData<Boolean>(false)
-    val creatingPost: LiveData<Boolean> = mCreatingPost
+    val isCreatingPost: LiveData<Boolean> = mCreatingPost
 
     fun isTitleBlank() = titleText.get().isNullOrBlank()
-
-
 
     fun createPost(): LiveData<Boolean>{
         return if (imageUri.value == null){

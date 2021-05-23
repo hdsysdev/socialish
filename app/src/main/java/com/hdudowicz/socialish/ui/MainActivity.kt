@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -13,6 +14,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.hdudowicz.socialish.R
 import com.hdudowicz.socialish.databinding.ActivityMainBinding
 import com.hdudowicz.socialish.ui.createpost.CreatePostActivity
+import com.hdudowicz.socialish.util.DialogUtil
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -39,7 +41,13 @@ class MainActivity : AppCompatActivity() {
         // Setting up bottom navigation bar with navigation controller for the correct nav graph
         binding.navBar.setupWithNavController(navController)
 
-
     }
 
+    /**
+     * Overriding back button action to show a logout confirmation AlertDialog to the user instead of
+     * closing the activity.
+     */
+    override fun onBackPressed() {
+        DialogUtil.showLogoutDialog(this)
+    }
 }

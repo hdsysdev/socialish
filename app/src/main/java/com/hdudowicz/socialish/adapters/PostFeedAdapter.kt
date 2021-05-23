@@ -6,7 +6,12 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +22,7 @@ import com.hdudowicz.socialish.R
 import com.hdudowicz.socialish.data.model.Post
 import com.hdudowicz.socialish.data.source.PostRepository
 import com.hdudowicz.socialish.databinding.PostListItemBinding
+import com.hdudowicz.socialish.util.DialogUtil
 import com.hdudowicz.socialish.util.ImageUtil
 import com.perfomer.blitz.setTimeAgo
 
@@ -28,7 +34,11 @@ import com.perfomer.blitz.setTimeAgo
  */
 class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostItemDiffCallback()) {
     private val postRepository = PostRepository()
-    var isLocal = false
+    var selectedTab: Int? = null
+
+    // LiveData to notify subscribers that the feed needs to be reloaded
+    private val mShouldReload = MutableLiveData<Boolean>()
+    val shouldReload get(): LiveData<Boolean> = mShouldReload
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -45,6 +55,7 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
         val viewBinding = holder.binding
         // Setting binding post object to use data binding
         viewBinding.post = post
+        viewBinding.handler = PostItemClickHandler()
 
         val context = viewBinding.root.context
 
@@ -64,8 +75,71 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
             viewBinding.postBody.visibility = View.VISIBLE
         }
 
-        // Listener for share button using android Sharesheet to share post text to other apps
-        viewBinding.sharePost.setOnClickListener {
+        // Checking if this post is saved locally and loading the appropriate save button icon
+        val isPostSaved = postRepository.isPostSaved(context, post)
+        loadSaveIconInView(viewBinding.savePost, isPostSaved)
+
+        // If "My Posts" tab is selected then show delete post button and set onClick listener
+        if (selectedTab == 0){
+            viewBinding.deletePost.visibility = View.VISIBLE
+        } else {
+            // Hiding delete button as ListAdapter reuses some views
+            viewBinding.deletePost.visibility = View.GONE
+        }
+    }
+
+    inner class PostItemClickHandler{
+        /**
+         * Clicking the save post button checks if a post is saved locally, either saves or deletes it then updates the save button icon
+         *
+         * @param view the view this function is the click action for
+         * @param post object to be saved
+         */
+        fun savePost(view: View, post: Post){
+            var savedState = postRepository.isPostSaved(view.context, post)
+            if (savedState){
+                postRepository.deleteLocalPost(view.context, post)
+                savedState = false
+                // If saved post tab is open then reload post list after deleting post
+                if (selectedTab == 1){
+                    // Reload posts if post has been removed
+                    mShouldReload.postValue(true)
+                }
+            } else {
+                postRepository.savePostLocally(view.context, post)
+                savedState = true
+            }
+
+            // Loading new save button icon into view
+            loadSaveIconInView(view as ImageButton, savedState)
+        }
+
+        /**
+         * Show delete post dialog and add observer to post dialog result to mShouldReload LiveData.
+         * ObserveForever is used due to no access to a LifecycleOwner. Oberver is removed after
+         * dialog result is recieved
+         *
+         * @param view the view this function is a click action for
+         * @param post object being deleted
+         */
+        fun deletePost(view: View, post: Post){
+            val deleteResult = DialogUtil.showDeleteDialog(view.context, post)
+            val observer = object : Observer<Boolean>{
+                override fun onChanged(result: Boolean) {
+                    mShouldReload.postValue(result)
+                    deleteResult.removeObserver(this)
+                }
+            }
+            deleteResult.observeForever(observer)
+        }
+
+        /**
+         * Open Android Sharesheet to share post title and  text to other apps
+         *
+         * @param view the view this function is a click action for
+         * @param post object to be shared
+         */
+        fun sharePost(view: View, post: Post){
             // Creating share text
             val shareText = "Socialish Post - \nTitle: ${post.title} \nBody: ${post.body}"
             // Creating intent for sharing text data with other apps, includes a title and text
@@ -77,26 +151,7 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
             }
             // Opening Android Sharesheet app chooser
             val shareIntent = Intent.createChooser(sendIntent, null)
-            context.startActivity(shareIntent)
-        }
-
-        // Checking if this post is saved locally and loading the appropriate save button icon
-        val isPostSaved = postRepository.isPostSaved(context, post)
-        loadSaveIconInView(viewBinding.savePost, isPostSaved)
-
-        // Clicking the save post button checks if a post is saved locally, either saves or deletes it then updates the save button icon
-        viewBinding.savePost.setOnClickListener {
-            var savedState = postRepository.isPostSaved(context, post)
-            if (savedState){
-                postRepository.deleteLocalPost(context, post)
-                savedState = false
-            } else {
-                postRepository.savePostLocally(context, post)
-                savedState = true
-            }
-
-            // Loading new save button icon into view
-            loadSaveIconInView(viewBinding.savePost, savedState)
+            view.context.startActivity(shareIntent)
         }
     }
 
@@ -121,7 +176,7 @@ class PostFeedAdapter(): ListAdapter<Post, PostFeedAdapter.PostViewHolder>(PostI
             progressDrawable.start()
 
             // Setting post image with glide depending on if this adapter is showing locally stored posts
-            if (isLocal){
+            if (selectedTab == 1){
                 // Get locally saved post images using ImageUtil function to get File object of the post image
                 Glide.with(context)
                     .load(ImageUtil.getImageFile(context, post.postId))
