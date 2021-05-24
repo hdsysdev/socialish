@@ -16,19 +16,19 @@ import com.hdudowicz.socialish.databinding.ActivityMainBinding
 import com.hdudowicz.socialish.ui.createpost.CreatePostActivity
 import com.hdudowicz.socialish.util.DialogUtil
 
+/**
+ * The main activity of the app. Contains a bottom navigation bar that switches between fragments displayed in a NavHostFragment.
+ *
+ */
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        // Inflating MainActivity views and setting the root view to the content view of the activity
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        // Setting custom toolbar in layout as the activity support action bar
         setSupportActionBar(binding.topAppBar)
-
-        // Setting navController from fragment to be safe
-//        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-//        val navController = navHostFragment.navController
 
 
         val navController = findNavController(R.id.nav_host_fragment)
@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         // Setting up bottom navigation bar with navigation controller for the correct nav graph
         binding.navBar.setupWithNavController(navController)
-
     }
 
     /**
