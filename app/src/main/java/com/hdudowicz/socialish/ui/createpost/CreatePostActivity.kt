@@ -30,7 +30,9 @@ class CreatePostActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Inflating CreatePostActivity view using generated binding class
         binding = ActivityCreatePostBinding.inflate(layoutInflater)
+        // Setting the activity content view to the binding root view
         setContentView(binding.root)
 
         setSupportActionBar(binding.topAppBar)

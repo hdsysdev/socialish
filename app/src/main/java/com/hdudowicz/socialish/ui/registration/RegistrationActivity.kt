@@ -1,6 +1,5 @@
 package com.hdudowicz.socialish.ui.registration
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -17,6 +16,13 @@ import es.dmoral.toasty.Toasty
 import java.lang.IllegalArgumentException
 import java.net.ConnectException
 
+
+/**
+ * Activity for registering new user accounts for the application. Registers accounts using
+ * Firebase Auth.
+ *
+ * @constructor Create a new registration activity
+ */
 class RegistrationActivity : AppCompatActivity() {
     private lateinit var bindings: ActivityRegistrationBinding
     // Lazy load viewModel when it's first accessed
@@ -24,24 +30,28 @@ class RegistrationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Inflate activity views using generated binding class
         bindings = ActivityRegistrationBinding.inflate(layoutInflater)
         setContentView(bindings.root)
         setSupportActionBar(bindings.toolbar)
-
+        // Show back button in toolbar
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+        // Sets the ViewModel and click handler classes for use with data binding in layouts
         bindings.viewModel = viewModel
         bindings.clickHandler = RegistrationClickHandler()
 
+        // Observe the user's registration state. If successful they are automatically logged in.
+        // If registering fails, an appropriate error message is shown to the user
         viewModel.userRegisterState.observe(this, { resource ->
             if (resource is Resource.Success && resource.data != null) {
                 // Start main activity when user has logged in successfully
                 Toasty.success(this, "User registered").show()
                 finish()
+                startMainActivity()
             } else if (resource is Resource.Error) {
                 // If exception is from invalid credentials, tell user to try again
                 FirebaseCrashlytics.getInstance().recordException(resource.exception)
-
+                // Handle registration errors
                 when (resource.exception) {
                     is ConnectException -> {
                         Toasty.warning(bindings.root.context, "Please connect to the internet").show()
@@ -64,27 +74,32 @@ class RegistrationActivity : AppCompatActivity() {
         })
     }
 
+    /**
+     * Function to start the main activity
+     */
     private fun startMainActivity(){
         startActivity(Intent(this, MainActivity::class.java))
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when(requestCode){
-            0 -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    startMainActivity()
-                }
-            }
-        }
-    }
-
+    /**
+     * Handle toolbar back button click action
+     *
+     * @return has the action been handled
+     */
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
     }
 
+    /**
+     * Click handler class for the RegistrationActivity
+     *
+     * @constructor Create a new click handler instance
+     */
     inner class RegistrationClickHandler{
+        /**
+         * Registers a user with the entered credentials or if the email or text fields are empty then show an error
+         */
         fun register(){
             if (bindings.emailText.text.isNullOrBlank() || bindings.passwordText.text.isNullOrBlank()){
                 Toasty.error(bindings.root.context, "Enter a username and password").show()

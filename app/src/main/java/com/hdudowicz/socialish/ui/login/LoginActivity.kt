@@ -1,9 +1,6 @@
 package com.hdudowicz.socialish.ui.login
 
-import android.R
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -33,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
     private val viewModel by lazy {ViewModelProvider(this).get(LoginViewModel::class.java) }
 
     /**
-     * Overriding onCreate callback in the Activity lifecycle.
+     * Overriding onCreate activity lifecycle callback.
      *
      * @param savedInstanceState Bundle object containing previous Activity state data
      */
@@ -92,22 +89,24 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when(requestCode){
-            0 -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    startMainActivity()
-                }
-            }
-        }
-    }
-
+    /**
+     * Start the MainActivity when user is logged in
+     */
     private fun startMainActivity(){
         startActivity(Intent(this, MainActivity::class.java))
     }
 
-    inner class LoginClickHandler(){
+    /**
+     * Class for handling clicks on views in LoginActivity
+     *
+     * @constructor Create a new click handler object
+     */
+    inner class LoginClickHandler{
+        /**
+         * Login user if both email and password are entered, shows error if either field is blank
+         *
+         * @param view of the login button being clicked
+         */
         fun login(view: View){
             if (bindings.emailText.text.isNullOrBlank() || bindings.passwordText.text.isNullOrBlank()){
                 Toasty.error(view.context, "Enter a username and password").show()
@@ -116,6 +115,12 @@ class LoginActivity : AppCompatActivity() {
                 viewModel.login()
             }
         }
+
+        /**
+         * Start and display the registration activity
+         *
+         * @param view of the registration button being clicked
+         */
         fun startRegistration(view: View){
             startActivity(Intent(view.context, RegistrationActivity::class.java))
         }

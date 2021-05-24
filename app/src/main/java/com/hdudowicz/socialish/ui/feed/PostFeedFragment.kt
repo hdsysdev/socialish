@@ -121,7 +121,7 @@ class PostFeedFragment : Fragment() {
 }
 
 /**
- * Click handler class views in the PostFeedFragment
+ * Click handler class for views in the PostFeedFragment
  *
  * @constructor Create new click handler object
  */
