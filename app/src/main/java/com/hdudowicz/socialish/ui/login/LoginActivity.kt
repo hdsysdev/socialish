@@ -55,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
             } else if (resource is Resource.Error) {
                 // Handling different potential Firebase exceptions
                 when (resource.exception) {
-                    // Show incorrect credential error shows a toast message asking the user to try again
+                                        // Show incorrect credential error shows a toast message asking the user to try again
                     is FirebaseAuthInvalidCredentialsException, is FirebaseAuthInvalidUserException -> {
                         Toasty.error(
                             bindings.root.context,

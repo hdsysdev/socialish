@@ -60,7 +60,7 @@ class RegistrationActivity : AppCompatActivity() {
                         Toasty.error(bindings.root.context, "User with this email already exists").show()
                     }
                     is FirebaseAuthInvalidCredentialsException -> {
-                        Toasty.error(this, "Please use a valid email").show()
+                        Toasty.error(this, "Please use a valid email and password with 6 characters or more").show()
                     }
                     is IllegalArgumentException -> {
                         Toasty.error(this, "Please enter an email and password").show()
